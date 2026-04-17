@@ -1,0 +1,38 @@
+@startuml
+left to right direction
+
+actor "Supplier" as farmer
+actor "Malicious Competitor" as hacker
+
+rectangle "Cantinas APP" {
+    ' Legitimate Use Cases
+    usecase "Creates a supplier application" as Use
+    usecase "Upload Certificates" as Upload
+    
+    ' Misuse Cases (Black Background)
+    usecase "Steal Private Documents" as Misuse <<Black>>
+    usecase "Predict File ID" as IDOR <<Black>>
+    
+    ' Mitigation Cases
+    usecase "Encrypt File URIs" as Mitigate
+}
+
+' Legitimate Flow
+farmer --> Use
+Use ..> Upload : <<includes>>
+
+' Attack Flow
+hacker --> Misuse
+Misuse ..> IDOR : <<includes>>
+
+' Threat and Mitigation Relationships
+Misuse --|> Use : <<threatens>>
+IDOR --|> Upload : <<threatens>>
+Mitigate ..> IDOR : <<mitigates>>
+
+' Styling
+skinparam usecase {
+    BackgroundColor<<Black>> Black
+    FontColor<<Black>> White
+}
+@endum

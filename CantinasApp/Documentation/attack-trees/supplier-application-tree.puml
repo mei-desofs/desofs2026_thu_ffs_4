@@ -1,0 +1,52 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+hide empty members
+
+' Colors to match your example
+skinparam class {
+    BackgroundColor<<Goal>> #skyblue
+    BackgroundColor<<Step>> #lightgrey
+    BorderColor #black
+}
+
+' Define the nodes
+class "Accept Supplier Application" as Goal <<Goal>>
+
+class "Acquire Administrative\nCredentials" as Credentials <<Step>>
+class "Exploit Application\nLogic" as Logic <<Step>>
+
+class "Phishing Attack on\nNetwork Manager" as Phishing <<Step>>
+class "Find Credentials in\nExposed Data" as Stuffing <<Step>>
+
+class "SQL Injection using \n the file upload feature" as SQLi <<Step>>
+class "Parameter Tampering\non Submission Form" as Tamper <<Step>>
+
+class "Input Validation\nis Disabled" as NoVal <<Step>>
+class "Payload contains\nUPDATE command" as Payload <<Step>>
+
+' Build the Hierarchy
+Goal -- Credentials
+Goal -- Logic
+
+Credentials -- Phishing
+Credentials -- Stuffing
+
+Logic -- SQLi
+Logic -- Tamper
+
+' The AND relationship
+SQLi -- NoVal
+SQLi -- Payload
+
+' Add logic labels
+(Goal, Credentials) .. OR
+(Goal, Logic) .. OR
+
+(Credentials, Phishing) .. OR
+(Credentials, Stuffing) .. OR
+
+(SQLi, NoVal) .. AND
+(SQLi, Payload) .. AND
+
+@endum

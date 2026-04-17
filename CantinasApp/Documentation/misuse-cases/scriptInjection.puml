@@ -1,0 +1,38 @@
+@startuml
+left to right direction
+
+actor "Supplier" as farmer
+actor "Hacker" as hacker
+
+rectangle "Cantinas APP" {
+    ' Legitimate Use Cases
+    usecase "Creates a supplier application" as Use
+    usecase "Review Applications" as Review
+    
+    ' Misuse Cases (Black Background)
+    usecase "Inject Malicious Script" as Misuse <<Black>>
+    usecase "Bypass File Validation" as Bypass <<Black>>
+    
+    ' Mitigation Cases
+    usecase "File Content Scanning" as Mitigate
+}
+
+' Legitimate Flow
+farmer --> Use
+Review --|> Use : <<includes>>
+
+' Attack Flow
+hacker --> Misuse
+Misuse ..> Bypass : <<includes>>
+
+' Threat and Mitigation Relationships
+Misuse --|> Review : <<threatens>>
+Bypass --|> Use : <<threatens>>
+Mitigate ..> Bypass : <<mitigates>>
+
+' Styling
+skinparam usecase {
+    BackgroundColor<<Black>> Black
+    FontColor<<Black>> White
+}
+@endum
