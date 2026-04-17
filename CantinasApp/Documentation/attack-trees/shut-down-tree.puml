@@ -1,0 +1,15 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+hide empty members
+
+class "Shut Down\nApplication" as Goal #skyblue
+class "Crash Server with\nLarge File Uploads" as Files #lightgrey
+class "Overload server with\nbot traffic" as Bots #lightgrey
+
+Goal -- Files
+Goal -- Bots
+
+(Goal, Files) .. OR
+(Goal, Bots) .. OR
+@endum
