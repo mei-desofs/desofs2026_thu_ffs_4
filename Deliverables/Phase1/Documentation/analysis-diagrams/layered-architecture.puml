@@ -1,0 +1,60 @@
+@startuml
+top to bottom direction
+
+package "Route Layer" {
+  [UserRoutes]
+  [ApplicationRoutes]
+  [MenuRoutes]
+  [ReservationRoutes]
+}
+
+package "Controller Layer" {
+  [UserController]
+  [ApplicationController]
+  [MenuController]
+  [ReservationController]
+}
+
+package "Service Layer" {
+  [UserService]
+  [ApplicationService]
+  [MenuService]
+  [ReservationService]
+}
+
+package "Model Layer (Sequelize)" {
+  [User]
+  [Application]
+  [Menu]
+  [Reservation]
+  [Product]
+  [Stock]
+}
+
+database "MySQL" as MySQL
+
+[UserRoutes] --> [UserController]
+[ApplicationRoutes] --> [ApplicationController]
+[MenuRoutes] --> [MenuController]
+[ReservationRoutes] --> [ReservationController]
+
+[UserController] --> [UserService]
+[ApplicationController] --> [ApplicationService]
+[MenuController] --> [MenuService]
+[ReservationController] --> [ReservationService]
+
+[UserService] --> [User]
+[ApplicationService] --> [Application]
+[MenuService] --> [Menu]
+[ReservationService] --> [Reservation]
+[ApplicationService] --> [Product]
+[ReservationService] --> [Stock]
+
+[User] --> MySQL
+[Application] --> MySQL
+[Menu] --> MySQL
+[Reservation] --> MySQL
+[Product] --> MySQL
+[Stock] --> MySQL
+
+@enduml

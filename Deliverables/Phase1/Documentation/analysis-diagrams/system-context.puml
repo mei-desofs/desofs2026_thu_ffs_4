@@ -1,0 +1,35 @@
+@startuml
+left to right direction
+
+actor Supplier
+actor "Network Manager" as NetworkManager
+actor Nutritionist
+actor Student
+actor "Canteen Staff" as CanteenStaff
+
+rectangle "CantinasApp Frontend\n(React + Vite)" as FE
+rectangle "CantinasApp Backend API\n(Node.js + Express)" as BE
+database "MySQL" as DB
+folder "Document Storage\n(uploads/)" as FS
+component "Scheduled Jobs\n(node-cron)" as JOBS
+
+Supplier --> FE
+NetworkManager --> FE
+Nutritionist --> FE
+Student --> FE
+CanteenStaff --> FE
+
+FE --> BE : HTTPS API calls
+BE --> DB : ORM queries (Sequelize)
+BE --> FS : Upload/read supplier documents
+JOBS --> BE : Trigger planning workflows
+
+note right of BE
+Main API domains:
+/users, /applications,
+/products, /stocks,
+/menus, /reservations,
+/orders, /notifications
+end note
+
+@enduml

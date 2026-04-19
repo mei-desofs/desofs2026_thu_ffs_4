@@ -1,0 +1,95 @@
+@startuml
+left to right direction
+
+package "Aggregate A\nIdentity and Access" {
+  class User {
+    +id
+    +name
+    +email
+    +role
+    +status
+  }
+}
+
+package "Aggregate B\nSupplier Application" {
+  class Application {
+    +id
+    +userId
+    +status
+    +documentsSubmitted
+  }
+  class FarmerProduct {
+    +id
+    +applicationId
+    +productId
+    +quantity
+  }
+  class DocumentInfo {
+    +filename
+    +path
+  }
+
+  Application "1" o-- "many" FarmerProduct
+  Application "1" o-- "many" DocumentInfo
+}
+
+package "Aggregate C\nMeal Planning and Reservations" {
+  class Menu {
+    +id
+    +initialDate
+    +finalDate
+    +status
+  }
+  class Meal {
+    +id
+    +date
+    +dishId
+  }
+  class Reservation {
+    +id
+    +status
+    +reservationDate
+    +userId
+    +mealId
+  }
+
+  Menu "1" o-- "many" Meal
+  Meal "1" <-- "many" Reservation
+}
+
+package "Aggregate D\nInventory and Procurement" {
+  class Product {
+    +id
+    +name
+    +typeId
+  }
+  class Stock {
+    +id
+    +productId
+    +quantity
+  }
+  class Batch {
+    +id
+    +productId
+    +quantity
+  }
+  class NeededProduct {
+    +id
+    +productId
+    +neededQty
+  }
+  class Order {
+    +id
+    +status
+  }
+
+  Product "1" <-- "many" Stock
+  Product "1" <-- "many" Batch
+  Product "1" <-- "many" NeededProduct
+  NeededProduct "many" --> "1" Order
+}
+
+User "1" --> "many" Application
+User "1" --> "many" Reservation
+
+@enduml
