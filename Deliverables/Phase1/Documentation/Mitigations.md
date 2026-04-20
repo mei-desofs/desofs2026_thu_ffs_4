@@ -177,3 +177,21 @@ Mitigation strategies aim to:
 This mitigation plan focuses on reducing risks that could significantly impact the **security, availability, and reliability** of the Cantinas system. High-priority risks are addressed first, ensuring system stability and protection of sensitive data, while medium and low-priority risks are mitigated through structured development and operational practices.
 
 These mitigation strategies provide a **clear, feasible, and prioritized approach** to managing project risks and improving overall system resilience.
+
+---
+
+# Mitigation ID Mapping (Traceability)
+
+The following table maps the mitigation IDs used in the [Traceability Matrix](TraceabilityMatrix.md) to the mitigation strategies documented in this file.
+
+| Mitigation ID | Mitigation Summary                                                  | Related Risk Section(s)                         |
+| ------------- | ------------------------------------------------------------------- | ----------------------------------------------- |
+| M-01          | RBAC, strong authentication, and identity verification controls     | 1. Data Breach                                  |
+| M-02          | Input validation, sanitization, and parameter integrity checks      | 1. Data Breach, 3. Software Bugs                |
+| M-03          | File upload restrictions, type/size checks, and content validation  | 1. Data Breach, 2. System Downtime              |
+| M-04          | Security logging, monitoring, and audit traceability                | 1. Data Breach                                  |
+| M-05          | Authorization controls for file/document access                     | 1. Data Breach                                  |
+| M-06          | Data confidentiality controls and secure communication              | 1. Data Breach                                  |
+| M-07          | Availability controls: throttling, limits, and graceful degradation | 2. System Downtime                              |
+| M-08          | Authorization checks for privileged actions and least privilege     | 1. Data Breach                                  |
+| M-09          | Dependency vulnerability management lifecycle                       | 5. Known Security Vulnerabilities in Dependencies |

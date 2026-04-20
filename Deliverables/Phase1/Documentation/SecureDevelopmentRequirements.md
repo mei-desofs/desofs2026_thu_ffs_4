@@ -1,4 +1,4 @@
-# Secure Development Requirements - Phase 1
+# Secure Development Requirements
 
 ## 1. Purpose
 
