@@ -33,6 +33,8 @@ Applies STRIDE to identify threats, attack paths and misuse cases for critical f
 
 [Section 3 - Threat Analysis](threat-analysis.md)
 
+[Abuse / Misuse Cases](AbuseCases.md)
+
 ### 4. Risk Assessment
 
 Prioritizes identified threats using likelihood and impact, with justification for ranking.
