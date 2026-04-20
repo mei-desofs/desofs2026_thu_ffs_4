@@ -45,14 +45,26 @@ Defines feasible mitigation strategies, prioritizing higher-risk scenarios first
 
 [Section 5 - Mitigations](Mitigations.md)
 
-### 6. Security Testing Plan
+### 6. Security Requirements
+
+Defines security requirements and their justification based on threats, risks, best practices, and regulatory context.
+
+[Section 6 - Security Requirements](SecurityRequirements.md)
+
+### 7. Security Testing Plan
 
 Defines the methodology, threat-to-test traceability, and review process for security testing.
 
-[Section 6 - Security Testing Plan](SecurityTesting.md)
+[Section 7 - Security Testing Plan](SecurityTesting.md)
 
-### 7. ASVS Checklist (Phase 1)
+### 8. Traceability Matrix
+
+Provides end-to-end traceability between threats, risks, mitigations, requirements, tests, and ASVS chapters.
+
+[Section 8 - Traceability Matrix](TraceabilityMatrix.md)
+
+### 9. ASVS Checklist (Phase 1)
 
 Provides architecture-focused ASVS coverage and current status for Phase 1.
 
-[Section 7 - ASVS Checklist](../ASVS-Phase1.md)
+[Section 9 - ASVS Checklist](../ASVS-Phase1.md)

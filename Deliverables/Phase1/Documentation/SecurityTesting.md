@@ -42,6 +42,8 @@ Out of scope in Phase 1:
 
 ### 4.2 Test approach
 
+The test cases ST-01 to ST-10 are derived from the misuse and abuse cases documented in threat-analysis.md, and each scenario is mapped to threats identified through STRIDE to ensure direct traceability from threat modeling to security testing.
+
 1. Select high-priority threats from risk assessment.
 2. Map each threat to one or more test cases.
 3. Define expected secure behavior and rejection criteria.
