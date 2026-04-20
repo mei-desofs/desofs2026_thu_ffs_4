@@ -51,20 +51,26 @@ Defines security requirements and their justification based on threats, risks, b
 
 [Section 6 - Security Requirements](SecurityRequirements.md)
 
-### 7. Security Testing Plan
+### 7. Secure Development Requirements
+
+Defines how the team will work during development so that security is built in from the start (branching, code review, secrets, secure coding, quality gates, Definition of Done, and tooling).
+
+[Section 7 - Secure Development Requirements](SecureDevelopmentRequirements.md)
+
+### 8. Security Testing Plan
 
 Defines the methodology, threat-to-test traceability, and review process for security testing.
 
-[Section 7 - Security Testing Plan](SecurityTesting.md)
+[Section 8 - Security Testing Plan](SecurityTesting.md)
 
-### 8. Traceability Matrix
+### 9. Traceability Matrix
 
 Provides end-to-end traceability between threats, risks, mitigations, requirements, tests, and ASVS chapters.
 
-[Section 8 - Traceability Matrix](TraceabilityMatrix.md)
+[Section 9 - Traceability Matrix](TraceabilityMatrix.md)
 
-### 9. ASVS Checklist (Phase 1)
+### 10. ASVS Checklist (Phase 1)
 
 Provides architecture-focused ASVS coverage and current status for Phase 1.
 
-[Section 9 - ASVS Checklist](../ASVS-Phase1.md)
+[Section 10 - ASVS Checklist](../ASVS-Phase1.md)
