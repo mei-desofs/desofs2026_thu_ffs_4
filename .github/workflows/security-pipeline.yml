@@ -383,7 +383,7 @@ jobs:
 
       # 1️⃣ Build do artefacto deployável (Docker image)
       - name: Build backend image
-        run: docker build -t cantinas-backend CantinasApp/Backend
+        run: docker build -t cantinas-backend .
 
       # 2️⃣ Security scanning do artefacto (SCA at image level)
       # Deteta vulnerabilidades em:
