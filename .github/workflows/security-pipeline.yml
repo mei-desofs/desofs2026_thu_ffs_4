@@ -363,11 +363,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Detecta API keys, tokens e passwords no código
-      - name: Run Gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install Gitleaks
+        run: |
+          wget https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks_linux_x64.tar.gz
+          tar -xzf gitleaks_linux_x64.tar.gz
+          sudo mv gitleaks /usr/local/bin/
+
+      # QUALITY GATE
+      - name: Run Gitleaks scan
+        run: gitleaks detect --source . --verbose
+
+      # JSON evidence report
+      - name: Generate Gitleaks report
+        if: always()
+        run: |
+          gitleaks detect \
+            --source . \
+            --report-format json \
+            --report-path gitleaks-report.json || true
+
+      - name: Upload Gitleaks report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gitleaks-report
+          path: gitleaks-report.json
+          retention-days: 30
 
   # =========================
   # ARTIFACT SCANNING (TRIVY + DOCKER IMAGE)
