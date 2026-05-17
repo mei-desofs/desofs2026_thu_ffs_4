@@ -1,4 +1,4 @@
-const cron = require("node-cron");
+import cron from "node-cron";
 import { ReservationService } from "../Service/ReservationService";
 
 const reservationService = new ReservationService();

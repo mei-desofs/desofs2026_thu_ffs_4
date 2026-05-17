@@ -79,7 +79,7 @@ export class UserService {
     if(user.role === "Supplier") {
     // se o supplier tiver orders, cancelear e meter neededProducts como needed outra vez
     const orders = await OrderService.getByUserId(id);
-    let needProductsIds = [];
+    const needProductsIds = [];
     for(const order of orders) {
         await OrderService.updateStatus(order.id, "cancelled");
         needProductsIds.push(order.neededProductId);

@@ -14,7 +14,7 @@ export interface OrderAttributes {
     userId: number;
     neededProductId: number ;
     productId: number;
-    unit: String;
+    unit: string;
     quantity: number;
     status: OrderStatus;
     date: Date;
@@ -34,7 +34,7 @@ export class Order
     public userId!: number;
     public neededProductId!: number;
     public productId!: number;
-    public unit!: String;
+    public unit!: string;
     public quantity!: number;
     public status!: OrderStatus;
     public date!: Date;

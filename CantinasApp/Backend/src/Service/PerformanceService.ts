@@ -20,8 +20,6 @@ export class PerformanceService {
         mealId?: number; // ID da refeição
         refeitorioId?: number; // ID do refeitório (para filtrar por refeitório)
     }) {
-        const { Op } = require("sequelize");
-
         // Construir filtro de data baseado nos parâmetros
         let dateFilter: any = {};
 

@@ -4,6 +4,7 @@ import {Meal} from "../Model/Meal";
 import {Ingredient} from "../Model/Ingredient";
 import {Canteen} from "../Model/Canteen";
 import {Refeitorio} from "../Model/Refeitorio";
+import { Op } from "sequelize";
 
 export class MealService {
 
@@ -42,8 +43,6 @@ export class MealService {
     }
 
     async getCanteenStatistics(canteenId: number, filter?: { date?: string }) {
-        const { Op } = require("sequelize");
-        
         const whereClause: any = {
             canteenId: canteenId
         };

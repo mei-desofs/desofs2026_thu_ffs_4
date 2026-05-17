@@ -2,7 +2,6 @@ import { Ingredient } from './Model/Ingredient';
 import { Recipe } from './Model/Recipe';
 import { Dish } from './Model/Dish';
 import { Meal } from './Model/Meal';
-import { Menu } from './Model/Menu';
 import { Batch } from './Model/Batch';
 import { Stock } from './Model/Stock';
 import { Product } from "./Model/Product";
@@ -2170,4 +2169,4 @@ const usersToInsert = [
         console.error('Error creating institutions/canteens/refeitorios/meals:', error);
     }
 
-};
+}

@@ -5,6 +5,7 @@ import { Dish } from "../Model/Dish";
 import { Refeitorio } from "../Model/Refeitorio";
 import { Canteen } from "../Model/Canteen";
 import { ReservationQuantitiesCanteen } from "../Model/ReservationQuantitiesCanteen";
+import { Op } from "sequelize";
 
 export class ReservationService {
     // Função helper para atualizar a tabela reservation_quantities_canteen
@@ -83,7 +84,6 @@ export class ReservationService {
     }
 
     async listReservations(filter?: { userId?: number; status?: string; refeitorioId?: number }) {
-        const { Op } = require("sequelize");
         const where: any = {};
         if (filter?.userId) where.userId = filter.userId;
         if (filter?.refeitorioId) where.refeitorioId = filter.refeitorioId;
@@ -174,8 +174,6 @@ export class ReservationService {
     }
 
     async markUnconsumedReservations(targetDate?: Date) {
-        const { Op } = require("sequelize");
-        
         // Se não for fornecida uma data, usa a data atual
         const dateToCheck = targetDate || new Date();
         const checkDate = new Date(dateToCheck.getFullYear(), dateToCheck.getMonth(), dateToCheck.getDate());
