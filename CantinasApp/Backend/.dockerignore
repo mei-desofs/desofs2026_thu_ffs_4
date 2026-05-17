@@ -14,6 +14,3 @@ reports
 .DS_Store
 tests
 jest.config.js
-tsconfig.json
-.eslintrc.json
-uploads
