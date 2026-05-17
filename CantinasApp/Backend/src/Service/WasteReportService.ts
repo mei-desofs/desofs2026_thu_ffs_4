@@ -5,6 +5,7 @@ import { Reservation } from "../Model/Reservation";
 import { Dish } from "../Model/Dish";
 import { DishType } from "../Model/DishType";
 import { Refeitorio } from "../Model/Refeitorio";
+import { Op } from "sequelize";
 
 export class WasteReportService {
     async createWasteReport(data: {
@@ -69,7 +70,6 @@ export class WasteReportService {
     }
 
     async getWasteReportsByDate(date: Date) {
-        const { Op } = require("sequelize");
         const startOfDay = new Date(date);
         startOfDay.setHours(0, 0, 0, 0);
         const endOfDay = new Date(date);
@@ -90,8 +90,6 @@ export class WasteReportService {
     }
 
     async getWasteReportsForConsumedMeals(date: Date) {
-        const { Op } = require("sequelize");
-        
         // Buscar todas as meals consumidas na data especificada
         const startOfDay = new Date(date);
         startOfDay.setHours(0, 0, 0, 0);
@@ -163,8 +161,6 @@ export class WasteReportService {
         dayOfWeek?: number;
         refeitorioId?: number; // ID do refeitório (para filtrar por refeitório)
     }) {
-        const { Op } = require("sequelize");
-        
         const whereClause: any = {};
         
         // Filtro por mealId

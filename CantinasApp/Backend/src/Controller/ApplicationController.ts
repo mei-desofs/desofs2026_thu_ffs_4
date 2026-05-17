@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { ApplicationService } from "../Service/ApplicationService";
 import Joi from "joi";
+import fs from "fs";
+import path from "path";
 
 const service = new ApplicationService();
 
@@ -150,9 +152,6 @@ export class ApplicationController {
     const applicationId = app.id;
     const files = req.files as Express.Multer.File[] || [];
 
-    const fs = require("fs");
-    const path = require("path");
-
     // Renomear ficheiros com userId-applicationId-nomeOriginal
     const documents = files.map(f => {
       const newFilename = `${userId}-${applicationId}-${f.originalname}`;
@@ -184,9 +183,6 @@ static async updateApplicationWithFiles(req: Request, res: Response) {
     const existingApp = await service.getApplicationByUser(Number(req.body.userId));
 
     const files = req.files as Express.Multer.File[] || [];
-    const fs = require("fs");
-    const path = require("path");
-
     const newDocuments = files.map(f => {
       const newFilename = `${existingApp.userId}-${applicationId}-${f.originalname}`;
       const newPath = path.join("uploads", newFilename);

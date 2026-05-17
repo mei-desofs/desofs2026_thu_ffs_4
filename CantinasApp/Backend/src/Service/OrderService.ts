@@ -8,7 +8,7 @@ export class OrderService {
         userId: number,
         neededProductId: number,
         productId: number,
-        unit: String,
+        unit: string,
         quantity: number,
         date: Date,
         canteenId: number
@@ -30,7 +30,7 @@ export class OrderService {
         data: Partial<{
             neededProductId: number;
             productId: number;
-            unit: String;
+            unit: string;
             quantity: number;
         }>
     ) {

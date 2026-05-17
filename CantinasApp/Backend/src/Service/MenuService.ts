@@ -90,7 +90,7 @@ export class MenuService {
         }
         
         // Tentar encontrar menu que se sobrepõe com a semana
-        let menu = await Menu.findOne({ 
+        const menu = await Menu.findOne({ 
             where: whereClause,
             order: [["initialDate", "DESC"]] 
         });

@@ -1,4 +1,4 @@
-import { addDays, getWeekFromDate } from "../utils/date";
+import { addDays, getWeekFromDate, getWeekRange } from "../utils/date";
 import { convertQuantity } from "../utils/unitConversion";
 
 describe("utils", () => {
@@ -11,7 +11,7 @@ describe("utils", () => {
   });
 
   test("getWeekRange returns expected start and end", () => {
-    const { start, end } = (require("../utils/date") as any).getWeekRange(1);
+    const { start, end } = getWeekRange(1);
     expect(start instanceof Date).toBe(true);
     expect(end instanceof Date).toBe(true);
     // start should be the defined START_DATE in the module (2025-01-01)

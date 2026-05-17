@@ -6,7 +6,7 @@ export interface NeededProductAttributes {
     date: Date;
     productId: number;
     mealId: number;
-    unit: String;
+    unit: string;
     quantity: number;
     canteenId: number;
     status: "needed" | "ordered" | "received";
@@ -25,7 +25,7 @@ export class NeededProduct
     public date!: Date;
     public productId!: number;
     public mealId!: number;
-    public unit!: String;
+    public unit!: string;
     public quantity!: number;
     public canteenId!: number;
     public status!: "needed" | "ordered" | "received";

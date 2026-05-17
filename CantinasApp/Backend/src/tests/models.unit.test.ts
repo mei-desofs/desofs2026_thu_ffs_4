@@ -35,9 +35,9 @@ const modelFiles = [
 ];
 
 describe("Model modules load", () => {
-  test("require all model modules", () => {
+  test("require all model modules", async () => {
     for (const name of modelFiles) {
-      const mod = require(`../Model/${name}`);
+      const mod = await import(`../Model/${name}`);
       expect(mod).toBeDefined();
     }
   });

@@ -7,6 +7,7 @@ import { Ingredient } from "../Model/Ingredient";
 import { Product } from "../Model/Product";
 import { Unit } from "../Model/Unit";
 import { DishType } from "../Model/DishType";
+import { Op } from "sequelize";
 
 // Interface para tipar o resultado do findAll com includes
 interface ReservationQuantitiesCanteenWithDish extends ReservationQuantitiesCanteen {
@@ -26,8 +27,6 @@ export class ReservationQuantitiesCanteenService {
         period?: string; // "day", "week", "month", "year"
         dayOfWeek?: number; // 0=Domingo, 1=Segunda, ..., 6=Sábado
     }) {
-        const { Op } = require("sequelize");
-        
         const whereClause: any = {
             canteenId: canteenId
         };
@@ -178,8 +177,6 @@ export class ReservationQuantitiesCanteenService {
         period?: string; // "day", "week", "month", "year"
         dayOfWeek?: number; // 0=Domingo, 1=Segunda, ..., 6=Sábado
     }) {
-        const { Op } = require("sequelize");
-        
         // Primeiro, buscar os registos de produção (mesma lógica do método anterior)
         const whereClause: any = {
             canteenId: canteenId

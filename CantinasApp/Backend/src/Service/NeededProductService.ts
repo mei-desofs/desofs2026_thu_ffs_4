@@ -5,7 +5,7 @@ export class NeededProductService {
         date: Date,
         productId: number,
         mealId: number,
-        unit: String,
+        unit: string,
         quantity: number,
         canteenId: number
     ) {
@@ -25,7 +25,7 @@ export class NeededProductService {
         data: Partial<{
             date: Date;
             productId: number;
-            unit: String;
+            unit: string;
             quantity: number;
             canteenId: number;
         }>

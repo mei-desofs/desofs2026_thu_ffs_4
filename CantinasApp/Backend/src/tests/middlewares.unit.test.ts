@@ -3,13 +3,20 @@ import jwt from "jsonwebtoken";
 
 process.env.JWT_SECRET = "test-secret";
 
-const { authMiddleware } = require("../middlewares/authMiddleware");
-const { authorizeRoles } = require("../middlewares/authorizeRoles");
+let authMiddleware: typeof import("../middlewares/authMiddleware").authMiddleware;
+let authorizeRoles: typeof import("../middlewares/authorizeRoles").authorizeRoles;
+
+type TestRequest = Partial<Request> & {
+  user?: {
+    id: number;
+    role: string;
+  };
+};
 
 jest.mock("jsonwebtoken");
 
 describe("Middlewares", () => {
-  let mockRequest: Partial<Request>;
+  let mockRequest: TestRequest;
   let mockResponse: Partial<Response>;
   let mockNext: NextFunction;
 
@@ -22,6 +29,11 @@ describe("Middlewares", () => {
       json: jest.fn().mockReturnThis(),
     };
     mockNext = jest.fn();
+  });
+
+  beforeAll(async () => {
+    ({ authMiddleware } = await import("../middlewares/authMiddleware"));
+    ({ authorizeRoles } = await import("../middlewares/authorizeRoles"));
   });
 
   describe("authMiddleware", () => {
@@ -122,7 +134,7 @@ describe("Middlewares", () => {
         mockNext,
       );
 
-      expect((mockRequest as any).user).toEqual({ id: 1, role: "admin" });
+      expect(mockRequest.user).toEqual({ id: 1, role: "admin" });
       expect(mockNext).toHaveBeenCalled();
       expect(mockResponse.status).not.toHaveBeenCalled();
     });
@@ -151,7 +163,7 @@ describe("Middlewares", () => {
   describe("authorizeRoles", () => {
     it("should return 401 if user is not authenticated", () => {
       const middleware = authorizeRoles("admin");
-      (mockRequest as any).user = undefined;
+      mockRequest.user = undefined;
 
       middleware(mockRequest as Request, mockResponse as Response, mockNext);
 
@@ -164,7 +176,7 @@ describe("Middlewares", () => {
 
     it("should return 403 if user role is not authorized", () => {
       const middleware = authorizeRoles("admin", "manager");
-      (mockRequest as any).user = { id: 1, role: "user" };
+      mockRequest.user = { id: 1, role: "user" };
 
       middleware(mockRequest as Request, mockResponse as Response, mockNext);
 
@@ -177,7 +189,7 @@ describe("Middlewares", () => {
 
     it("should call next() if user has one of the authorized roles", () => {
       const middleware = authorizeRoles("admin", "manager");
-      (mockRequest as any).user = { id: 1, role: "admin" };
+      mockRequest.user = { id: 1, role: "admin" };
 
       middleware(mockRequest as Request, mockResponse as Response, mockNext);
 
@@ -187,7 +199,7 @@ describe("Middlewares", () => {
 
     it("should call next() if user has any of the multiple authorized roles", () => {
       const middleware = authorizeRoles("admin", "manager", "user");
-      (mockRequest as any).user = { id: 2, role: "manager" };
+      mockRequest.user = { id: 2, role: "manager" };
 
       middleware(mockRequest as Request, mockResponse as Response, mockNext);
 
@@ -196,7 +208,7 @@ describe("Middlewares", () => {
 
     it("should handle single role authorization", () => {
       const middleware = authorizeRoles("admin");
-      (mockRequest as any).user = { id: 1, role: "admin" };
+      mockRequest.user = { id: 1, role: "admin" };
 
       middleware(mockRequest as Request, mockResponse as Response, mockNext);
 
@@ -205,7 +217,7 @@ describe("Middlewares", () => {
 
     it("should deny access with single role when user has different role", () => {
       const middleware = authorizeRoles("admin");
-      (mockRequest as any).user = { id: 1, role: "user" };
+      mockRequest.user = { id: 1, role: "user" };
 
       middleware(mockRequest as Request, mockResponse as Response, mockNext);
 
