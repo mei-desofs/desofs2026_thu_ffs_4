@@ -33,14 +33,14 @@ describe("generateNeededProductsFromPublishedMenus", () => {
     await generateNeededProductsFromPublishedMenus();
 
     expect(Menu.findAll).toHaveBeenCalledWith({
-      where: { status: { [Op.or]: ["published", "aproved"] } }
+      where: { status: { [Op.or]: ["published", "aproved"] } },
     });
   });
 
   it("should handle menus with no meals", async () => {
     const mockMenu = {
       id: 1,
-      meals: [1, 2]
+      meals: [1, 2],
     };
 
     (Menu.findAll as jest.Mock).mockResolvedValue([mockMenu]);
@@ -54,13 +54,13 @@ describe("generateNeededProductsFromPublishedMenus", () => {
   it("should skip meals with no dish", async () => {
     const mockMenu = {
       id: 1,
-      meals: [1]
+      meals: [1],
     };
     const mockMeal = {
       id: 1,
       dishId: 1,
       mealTypeId: 1,
-      date: new Date()
+      date: new Date(),
     };
 
     (Menu.findAll as jest.Mock).mockResolvedValue([mockMenu]);
@@ -76,17 +76,17 @@ describe("generateNeededProductsFromPublishedMenus", () => {
     const mockMenu = {
       id: 1,
       meals: [1],
-      canteenId: 1
+      canteenId: 1,
     };
     const mockMeal = {
       id: 1,
       dishId: 1,
       mealTypeId: 1,
-      date: new Date()
+      date: new Date(),
     };
     const mockDish = {
       id: 1,
-      recipeId: 1
+      recipeId: 1,
     };
 
     (Menu.findAll as jest.Mock).mockResolvedValue([mockMenu]);
@@ -103,21 +103,21 @@ describe("generateNeededProductsFromPublishedMenus", () => {
     const mockMenu = {
       id: 1,
       meals: [1],
-      canteenId: 1
+      canteenId: 1,
     };
     const mockMeal = {
       id: 1,
       dishId: 1,
       mealTypeId: 1,
-      date: new Date()
+      date: new Date(),
     };
     const mockDish = {
       id: 1,
-      recipeId: 1
+      recipeId: 1,
     };
     const mockRecipe = {
       id: 1,
-      ingredients: null
+      ingredients: null,
     };
 
     (Menu.findAll as jest.Mock).mockResolvedValue([mockMenu]);
@@ -134,27 +134,27 @@ describe("generateNeededProductsFromPublishedMenus", () => {
     const mockMenu = {
       id: 1,
       meals: [1],
-      canteenId: 1
+      canteenId: 1,
     };
     const mockMeal = {
       id: 1,
       dishId: 1,
       mealTypeId: 1,
-      date: new Date()
+      date: new Date(),
     };
     const mockDish = {
       id: 1,
-      recipeId: 1
+      recipeId: 1,
     };
     const mockRecipe = {
       id: 1,
-      ingredients: [1]
+      ingredients: [1],
     };
     const mockIngredient = {
       id: 1,
       quantity: 100,
       unitId: 1,
-      productId: 1
+      productId: 1,
     };
 
     (Menu.findAll as jest.Mock).mockResolvedValue([mockMenu]);
@@ -173,30 +173,30 @@ describe("generateNeededProductsFromPublishedMenus", () => {
     const mockMenu = {
       id: 1,
       meals: [1],
-      canteenId: 1
+      canteenId: 1,
     };
     const mockMeal = {
       id: 1,
       dishId: 1,
       mealTypeId: 1,
-      date: new Date()
+      date: new Date(),
     };
     const mockDish = {
       id: 1,
-      recipeId: 1
+      recipeId: 1,
     };
     const mockRecipe = {
       id: 1,
-      ingredients: [1]
+      ingredients: [1],
     };
     const mockIngredient = {
       id: 1,
       quantity: 100,
       unitId: 1,
-      productId: 1
+      productId: 1,
     };
     const mockAvgReservation = {
-      avgReservations: 50
+      avgReservations: 50,
     };
 
     (Menu.findAll as jest.Mock).mockResolvedValue([mockMenu]);
@@ -204,7 +204,9 @@ describe("generateNeededProductsFromPublishedMenus", () => {
     (Dish.findByPk as jest.Mock).mockResolvedValue(mockDish);
     (Recipe.findByPk as jest.Mock).mockResolvedValue(mockRecipe);
     (Ingredient.findAll as jest.Mock).mockResolvedValue([mockIngredient]);
-    (AverageReservation.findOne as jest.Mock).mockResolvedValue(mockAvgReservation);
+    (AverageReservation.findOne as jest.Mock).mockResolvedValue(
+      mockAvgReservation,
+    );
     (Unit.findByPk as jest.Mock).mockResolvedValue(null);
 
     await generateNeededProductsFromPublishedMenus();
@@ -216,34 +218,34 @@ describe("generateNeededProductsFromPublishedMenus", () => {
     const mockMenu = {
       id: 1,
       meals: [1],
-      canteenId: 1
+      canteenId: 1,
     };
     const mockMeal = {
       id: 1,
       dishId: 1,
       mealTypeId: 1,
-      date: new Date("2025-02-01")
+      date: new Date("2025-02-01"),
     };
     const mockDish = {
       id: 1,
-      recipeId: 1
+      recipeId: 1,
     };
     const mockRecipe = {
       id: 1,
-      ingredients: [1]
+      ingredients: [1],
     };
     const mockIngredient = {
       id: 1,
       quantity: 100,
       unitId: 1,
-      productId: 1
+      productId: 1,
     };
     const mockUnit = {
       id: 1,
-      name: "g"
+      name: "g",
     };
     const mockAvgReservation = {
-      avgReservations: 50
+      avgReservations: 50,
     };
 
     (Menu.findAll as jest.Mock).mockResolvedValue([mockMenu]);
@@ -251,7 +253,9 @@ describe("generateNeededProductsFromPublishedMenus", () => {
     (Dish.findByPk as jest.Mock).mockResolvedValue(mockDish);
     (Recipe.findByPk as jest.Mock).mockResolvedValue(mockRecipe);
     (Ingredient.findAll as jest.Mock).mockResolvedValue([mockIngredient]);
-    (AverageReservation.findOne as jest.Mock).mockResolvedValue(mockAvgReservation);
+    (AverageReservation.findOne as jest.Mock).mockResolvedValue(
+      mockAvgReservation,
+    );
     (Unit.findByPk as jest.Mock).mockResolvedValue(mockUnit);
     (Stock.findAll as jest.Mock).mockResolvedValue([]);
     (NeededProduct.findOne as jest.Mock).mockResolvedValue(null);
@@ -264,8 +268,8 @@ describe("generateNeededProductsFromPublishedMenus", () => {
         productId: 1,
         mealId: 1,
         unit: "g",
-        quantity: 5000
-      })
+        quantity: 5000,
+      }),
     );
   });
 
@@ -273,38 +277,38 @@ describe("generateNeededProductsFromPublishedMenus", () => {
     const mockMenu = {
       id: 1,
       meals: [1],
-      canteenId: 1
+      canteenId: 1,
     };
     const mockMeal = {
       id: 1,
       dishId: 1,
       mealTypeId: 1,
-      date: new Date("2025-02-01")
+      date: new Date("2025-02-01"),
     };
     const mockDish = {
       id: 1,
-      recipeId: 1
+      recipeId: 1,
     };
     const mockRecipe = {
       id: 1,
-      ingredients: [1]
+      ingredients: [1],
     };
     const mockIngredient = {
       id: 1,
       quantity: 100,
       unitId: 1,
-      productId: 1
+      productId: 1,
     };
     const mockUnit = {
       id: 1,
-      name: "g"
+      name: "g",
     };
     const mockAvgReservation = {
-      avgReservations: 50
+      avgReservations: 50,
     };
     const mockExisting = {
       quantity: 3000,
-      save: jest.fn()
+      save: jest.fn(),
     };
 
     (Menu.findAll as jest.Mock).mockResolvedValue([mockMenu]);
@@ -312,7 +316,9 @@ describe("generateNeededProductsFromPublishedMenus", () => {
     (Dish.findByPk as jest.Mock).mockResolvedValue(mockDish);
     (Recipe.findByPk as jest.Mock).mockResolvedValue(mockRecipe);
     (Ingredient.findAll as jest.Mock).mockResolvedValue([mockIngredient]);
-    (AverageReservation.findOne as jest.Mock).mockResolvedValue(mockAvgReservation);
+    (AverageReservation.findOne as jest.Mock).mockResolvedValue(
+      mockAvgReservation,
+    );
     (Unit.findByPk as jest.Mock).mockResolvedValue(mockUnit);
     (Stock.findAll as jest.Mock).mockResolvedValue([]);
     (NeededProduct.findOne as jest.Mock).mockResolvedValue(mockExisting);
@@ -327,41 +333,41 @@ describe("generateNeededProductsFromPublishedMenus", () => {
     const mockMenu = {
       id: 1,
       meals: [1],
-      canteenId: 1
+      canteenId: 1,
     };
     const mockMeal = {
       id: 1,
       dishId: 1,
       mealTypeId: 1,
-      date: new Date("2025-02-01")
+      date: new Date("2025-02-01"),
     };
     const mockDish = {
       id: 1,
-      recipeId: 1
+      recipeId: 1,
     };
     const mockRecipe = {
       id: 1,
-      ingredients: [1]
+      ingredients: [1],
     };
     const mockIngredient = {
       id: 1,
       quantity: 100,
       unitId: 1,
-      productId: 1
+      productId: 1,
     };
     const mockUnit = {
       id: 1,
-      name: "g"
+      name: "g",
     };
     const mockAvgReservation = {
-      avgReservations: 50
+      avgReservations: 50,
     };
     const mockBatch = {
       quantity: 6000,
-      unitId: 1
+      unitId: 1,
     };
     const mockStock = {
-      batches: [1]
+      batches: [1],
     };
 
     (Menu.findAll as jest.Mock).mockResolvedValue([mockMenu]);
@@ -369,7 +375,9 @@ describe("generateNeededProductsFromPublishedMenus", () => {
     (Dish.findByPk as jest.Mock).mockResolvedValue(mockDish);
     (Recipe.findByPk as jest.Mock).mockResolvedValue(mockRecipe);
     (Ingredient.findAll as jest.Mock).mockResolvedValue([mockIngredient]);
-    (AverageReservation.findOne as jest.Mock).mockResolvedValue(mockAvgReservation);
+    (AverageReservation.findOne as jest.Mock).mockResolvedValue(
+      mockAvgReservation,
+    );
     (Unit.findByPk as jest.Mock).mockResolvedValue(mockUnit);
     (Stock.findAll as jest.Mock).mockResolvedValue([mockStock]);
     (Batch.findAll as jest.Mock).mockResolvedValue([mockBatch]);
