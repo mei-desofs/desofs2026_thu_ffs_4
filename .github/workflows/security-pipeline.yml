@@ -282,14 +282,10 @@ jobs:
           node-version: "20"
 
       - name: Install dependencies
-        run: |
-          cd CantinasApp/Backend
-          npm ci
+        run: npm ci
 
       - name: Build
-        run: |
-          cd CantinasApp/Backend
-          npm run build
+        run: npm run build
 
       # Analysis results enviados para GitHub Security tab
       - name: Analyze
