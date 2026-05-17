@@ -28,7 +28,7 @@ describe("adjustOrdersAfterReservations", () => {
     await adjustOrdersAfterReservations();
 
     expect(Order.findAll).toHaveBeenCalledWith({
-      where: { status: "pending" }
+      where: { status: "pending" },
     });
     expect(User.findAll).not.toHaveBeenCalled();
   });
@@ -40,7 +40,7 @@ describe("adjustOrdersAfterReservations", () => {
       productId: 1,
       quantity: 100,
       status: "pending",
-      save: jest.fn()
+      save: jest.fn(),
     };
 
     (Order.findAll as jest.Mock).mockResolvedValue([mockOrder]);
@@ -59,12 +59,12 @@ describe("adjustOrdersAfterReservations", () => {
       productId: 1,
       quantity: 100,
       status: "pending",
-      save: jest.fn()
+      save: jest.fn(),
     };
     const mockNeededProduct = {
       id: 1,
       mealId: 1,
-      quantity: 100
+      quantity: 100,
     };
 
     (Order.findAll as jest.Mock).mockResolvedValue([mockOrder]);
@@ -84,12 +84,12 @@ describe("adjustOrdersAfterReservations", () => {
       productId: 1,
       quantity: 100,
       status: "pending",
-      save: jest.fn()
+      save: jest.fn(),
     };
     const mockNeededProduct = {
       id: 1,
       mealId: 1,
-      quantity: 100
+      quantity: 100,
     };
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 10); // 10 days away
@@ -98,7 +98,7 @@ describe("adjustOrdersAfterReservations", () => {
       date: tomorrow,
       dishId: 1,
       mealTypeId: 1,
-      canteenId: 1
+      canteenId: 1,
     };
 
     (Order.findAll as jest.Mock).mockResolvedValue([mockOrder]);
@@ -118,12 +118,12 @@ describe("adjustOrdersAfterReservations", () => {
       productId: 1,
       quantity: 100,
       status: "pending",
-      save: jest.fn()
+      save: jest.fn(),
     };
     const mockNeededProduct = {
       id: 1,
       mealId: 1,
-      quantity: 100
+      quantity: 100,
     };
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 2); // 2 days away
@@ -132,7 +132,7 @@ describe("adjustOrdersAfterReservations", () => {
       date: tomorrow,
       dishId: 1,
       mealTypeId: 1,
-      canteenId: 1
+      canteenId: 1,
     };
 
     (Order.findAll as jest.Mock).mockResolvedValue([mockOrder]);
@@ -154,12 +154,12 @@ describe("adjustOrdersAfterReservations", () => {
       productId: 1,
       quantity: 100,
       status: "pending",
-      save: jest.fn()
+      save: jest.fn(),
     };
     const mockNeededProduct = {
       id: 1,
       mealId: 1,
-      quantity: 100
+      quantity: 100,
     };
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 2); // 2 days away
@@ -168,17 +168,19 @@ describe("adjustOrdersAfterReservations", () => {
       date: tomorrow,
       dishId: 1,
       mealTypeId: 1,
-      canteenId: 1
+      canteenId: 1,
     };
     const mockAvgReservation = {
-      avgReservations: 100
+      avgReservations: 100,
     };
 
     (Order.findAll as jest.Mock).mockResolvedValue([mockOrder]);
     (NeededProduct.findByPk as jest.Mock).mockResolvedValue(mockNeededProduct);
     (Meal.findByPk as jest.Mock).mockResolvedValue(mockMeal);
     (Reservation.sum as jest.Mock).mockResolvedValue(0);
-    (AverageReservation.findOne as jest.Mock).mockResolvedValue(mockAvgReservation);
+    (AverageReservation.findOne as jest.Mock).mockResolvedValue(
+      mockAvgReservation,
+    );
     (User.findAll as jest.Mock).mockResolvedValue([]);
     (Product.findByPk as jest.Mock).mockResolvedValue({ name: "Product A" });
 
@@ -196,12 +198,12 @@ describe("adjustOrdersAfterReservations", () => {
       productId: 1,
       quantity: 100,
       status: "pending",
-      save: jest.fn()
+      save: jest.fn(),
     };
     const mockNeededProduct = {
       id: 1,
       mealId: 1,
-      quantity: 100
+      quantity: 100,
     };
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 2); // 2 days away
@@ -210,17 +212,19 @@ describe("adjustOrdersAfterReservations", () => {
       date: tomorrow,
       dishId: 1,
       mealTypeId: 1,
-      canteenId: 1
+      canteenId: 1,
     };
     const mockAvgReservation = {
-      avgReservations: 100
+      avgReservations: 100,
     };
 
     (Order.findAll as jest.Mock).mockResolvedValue([mockOrder]);
     (NeededProduct.findByPk as jest.Mock).mockResolvedValue(mockNeededProduct);
     (Meal.findByPk as jest.Mock).mockResolvedValue(mockMeal);
     (Reservation.sum as jest.Mock).mockResolvedValue(150);
-    (AverageReservation.findOne as jest.Mock).mockResolvedValue(mockAvgReservation);
+    (AverageReservation.findOne as jest.Mock).mockResolvedValue(
+      mockAvgReservation,
+    );
     (User.findAll as jest.Mock).mockResolvedValue([]);
     (Product.findByPk as jest.Mock).mockResolvedValue({ name: "Product A" });
 
@@ -238,12 +242,12 @@ describe("adjustOrdersAfterReservations", () => {
       productId: 1,
       quantity: 100,
       status: "pending",
-      save: jest.fn()
+      save: jest.fn(),
     };
     const mockNeededProduct = {
       id: 1,
       mealId: 1,
-      quantity: 100
+      quantity: 100,
     };
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 2);
@@ -252,21 +256,23 @@ describe("adjustOrdersAfterReservations", () => {
       date: tomorrow,
       dishId: 1,
       mealTypeId: 1,
-      canteenId: 1
+      canteenId: 1,
     };
     const mockAvgReservation = {
-      avgReservations: 100
+      avgReservations: 100,
     };
     const mockStockManager = {
       id: 1,
-      role: "StockManager"
+      role: "StockManager",
     };
 
     (Order.findAll as jest.Mock).mockResolvedValue([mockOrder]);
     (NeededProduct.findByPk as jest.Mock).mockResolvedValue(mockNeededProduct);
     (Meal.findByPk as jest.Mock).mockResolvedValue(mockMeal);
     (Reservation.sum as jest.Mock).mockResolvedValue(125); // 25% deviation
-    (AverageReservation.findOne as jest.Mock).mockResolvedValue(mockAvgReservation);
+    (AverageReservation.findOne as jest.Mock).mockResolvedValue(
+      mockAvgReservation,
+    );
     (User.findAll as jest.Mock).mockResolvedValue([mockStockManager]);
     (Product.findByPk as jest.Mock).mockResolvedValue({ name: "Product A" });
     (Notification.create as jest.Mock).mockResolvedValue({});
@@ -276,8 +282,8 @@ describe("adjustOrdersAfterReservations", () => {
     expect(Notification.create).toHaveBeenCalledWith(
       expect.objectContaining({
         userId: 1,
-        title: "Desvio significativo nas reservas"
-      })
+        title: "Desvio significativo nas reservas",
+      }),
     );
   });
 
@@ -288,12 +294,12 @@ describe("adjustOrdersAfterReservations", () => {
       productId: 1,
       quantity: 100,
       status: "pending",
-      save: jest.fn()
+      save: jest.fn(),
     };
     const mockNeededProduct = {
       id: 1,
       mealId: 1,
-      quantity: 100
+      quantity: 100,
     };
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 2);
@@ -302,21 +308,23 @@ describe("adjustOrdersAfterReservations", () => {
       date: tomorrow,
       dishId: 1,
       mealTypeId: 1,
-      canteenId: 1
+      canteenId: 1,
     };
     const mockAvgReservation = {
-      avgReservations: 100
+      avgReservations: 100,
     };
     const mockStockManager = {
       id: 1,
-      role: "StockManager"
+      role: "StockManager",
     };
 
     (Order.findAll as jest.Mock).mockResolvedValue([mockOrder]);
     (NeededProduct.findByPk as jest.Mock).mockResolvedValue(mockNeededProduct);
     (Meal.findByPk as jest.Mock).mockResolvedValue(mockMeal);
     (Reservation.sum as jest.Mock).mockResolvedValue(120);
-    (AverageReservation.findOne as jest.Mock).mockResolvedValue(mockAvgReservation);
+    (AverageReservation.findOne as jest.Mock).mockResolvedValue(
+      mockAvgReservation,
+    );
     (User.findAll as jest.Mock).mockResolvedValue([mockStockManager]);
     (Product.findByPk as jest.Mock).mockResolvedValue({ name: "Product A" });
     (Notification.create as jest.Mock).mockResolvedValue({});
@@ -326,8 +334,8 @@ describe("adjustOrdersAfterReservations", () => {
     expect(Notification.create).toHaveBeenCalledWith(
       expect.objectContaining({
         userId: 1,
-        title: "Encomendas ajustadas após reservas"
-      })
+        title: "Encomendas ajustadas após reservas",
+      }),
     );
   });
 
@@ -338,7 +346,7 @@ describe("adjustOrdersAfterReservations", () => {
       productId: 1,
       quantity: 100,
       status: "pending",
-      save: jest.fn()
+      save: jest.fn(),
     };
     const mockOrder2 = {
       id: 2,
@@ -346,13 +354,13 @@ describe("adjustOrdersAfterReservations", () => {
       productId: 2,
       quantity: 200,
       status: "pending",
-      save: jest.fn()
+      save: jest.fn(),
     };
 
     const mockNeededProduct = {
       id: 1,
       mealId: 1,
-      quantity: 100
+      quantity: 100,
     };
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 2);
@@ -361,17 +369,19 @@ describe("adjustOrdersAfterReservations", () => {
       date: tomorrow,
       dishId: 1,
       mealTypeId: 1,
-      canteenId: 1
+      canteenId: 1,
     };
     const mockAvgReservation = {
-      avgReservations: 100
+      avgReservations: 100,
     };
 
     (Order.findAll as jest.Mock).mockResolvedValue([mockOrder1, mockOrder2]);
     (NeededProduct.findByPk as jest.Mock).mockResolvedValue(mockNeededProduct);
     (Meal.findByPk as jest.Mock).mockResolvedValue(mockMeal);
     (Reservation.sum as jest.Mock).mockResolvedValue(100);
-    (AverageReservation.findOne as jest.Mock).mockResolvedValue(mockAvgReservation);
+    (AverageReservation.findOne as jest.Mock).mockResolvedValue(
+      mockAvgReservation,
+    );
     (User.findAll as jest.Mock).mockResolvedValue([]);
     (Product.findByPk as jest.Mock).mockResolvedValue({ name: "Product A" });
 

@@ -43,31 +43,31 @@ describe("generateOrdersFromNeededProducts", () => {
       quantity: 1000,
       unit: "g",
       productId: 1,
-      save: jest.fn()
+      save: jest.fn(),
     };
     const mockSupplierOrder1 = {
       id: 1,
       supplierId: 1,
-      position: 1
+      position: 1,
     };
     const mockSupplierOrder2 = {
       id: 2,
       supplierId: 2,
-      position: 2
+      position: 2,
     };
     const mockActiveUser = {
       id: 1,
-      status: "active"
+      status: "active",
     };
     const mockQuarantineUser = {
       id: 2,
-      status: "quarantine"
+      status: "quarantine",
     };
 
     (NeededProduct.findAll as jest.Mock).mockResolvedValue([mockNeededProduct]);
     (SupplierOrder.findAll as jest.Mock).mockResolvedValue([
       mockSupplierOrder1,
-      mockSupplierOrder2
+      mockSupplierOrder2,
     ]);
     (User.findAll as jest.Mock).mockResolvedValue([]);
     (User.findByPk as jest.Mock)
@@ -91,16 +91,16 @@ describe("generateOrdersFromNeededProducts", () => {
       unit: "g",
       productId: 1,
       mealId: 1,
-      save: jest.fn()
+      save: jest.fn(),
     };
     const mockSupplierOrder = {
       id: 1,
       supplierId: 1,
-      position: 1
+      position: 1,
     };
     const mockUser = {
       id: 1,
-      status: "active"
+      status: "active",
     };
     const mockFarmerProduct = {
       id: 1,
@@ -108,7 +108,7 @@ describe("generateOrdersFromNeededProducts", () => {
       productId: 1,
       quantity: 2000,
       unit: "g",
-      save: jest.fn()
+      save: jest.fn(),
     };
 
     (NeededProduct.findAll as jest.Mock).mockResolvedValue([mockNeededProduct]);
@@ -134,16 +134,16 @@ describe("generateOrdersFromNeededProducts", () => {
       unit: "g",
       productId: 1,
       mealId: 1,
-      save: jest.fn()
+      save: jest.fn(),
     };
     const mockSupplierOrder = {
       id: 1,
       supplierId: 1,
-      position: 1
+      position: 1,
     };
     const mockUser = {
       id: 1,
-      status: "active"
+      status: "active",
     };
     const mockFarmerProduct = {
       id: 1,
@@ -151,12 +151,12 @@ describe("generateOrdersFromNeededProducts", () => {
       productId: 1,
       quantity: 2000,
       unit: "g",
-      save: jest.fn()
+      save: jest.fn(),
     };
     const mockExistingOrder = {
       id: 1,
       quantity: 500,
-      save: jest.fn()
+      save: jest.fn(),
     };
 
     (NeededProduct.findAll as jest.Mock).mockResolvedValue([mockNeededProduct]);
@@ -181,16 +181,16 @@ describe("generateOrdersFromNeededProducts", () => {
       quantity: 1000,
       unit: "g",
       productId: 1,
-      mealId: 1
+      mealId: 1,
     };
     const mockSupplierOrder = {
       id: 1,
       supplierId: 1,
-      position: 1
+      position: 1,
     };
     const mockUser = {
       id: 1,
-      status: "active"
+      status: "active",
     };
     const mockFarmerProduct = {
       id: 1,
@@ -198,7 +198,7 @@ describe("generateOrdersFromNeededProducts", () => {
       productId: 1,
       quantity: 0,
       unit: "g",
-      save: jest.fn()
+      save: jest.fn(),
     };
 
     (NeededProduct.findAll as jest.Mock).mockResolvedValue([mockNeededProduct]);
@@ -221,16 +221,16 @@ describe("generateOrdersFromNeededProducts", () => {
       quantity: 1000,
       unit: "g",
       productId: 1,
-      mealId: 1
+      mealId: 1,
     };
     const mockSupplierOrder = {
       id: 1,
       supplierId: 1,
-      position: 1
+      position: 1,
     };
     const mockUser = {
       id: 1,
-      status: "active"
+      status: "active",
     };
     const mockFarmerProduct = {
       id: 1,
@@ -238,7 +238,7 @@ describe("generateOrdersFromNeededProducts", () => {
       productId: 1,
       quantity: 2000,
       unit: "g",
-      save: jest.fn()
+      save: jest.fn(),
     };
 
     (NeededProduct.findAll as jest.Mock).mockResolvedValue([mockNeededProduct]);
@@ -262,7 +262,7 @@ describe("generateOrdersFromNeededProducts", () => {
       unit: "g",
       productId: 1,
       mealId: 1,
-      save: jest.fn()
+      save: jest.fn(),
     };
     const mockNeededProduct2 = {
       id: 2,
@@ -272,12 +272,12 @@ describe("generateOrdersFromNeededProducts", () => {
       unit: "g",
       productId: 2,
       mealId: 2,
-      save: jest.fn()
+      save: jest.fn(),
     };
 
     (NeededProduct.findAll as jest.Mock).mockResolvedValue([
       mockNeededProduct1,
-      mockNeededProduct2
+      mockNeededProduct2,
     ]);
     (SupplierOrder.findAll as jest.Mock).mockResolvedValue([]);
     (User.findAll as jest.Mock).mockResolvedValue([]);
@@ -298,16 +298,16 @@ describe("generateOrdersFromNeededProducts", () => {
       unit: "g",
       productId: 1,
       mealId: 1,
-      save: jest.fn()
+      save: jest.fn(),
     };
     const mockSupplierOrder = {
       id: 1,
       supplierId: 1,
-      position: 1
+      position: 1,
     };
     const mockStockManager = {
       id: 1,
-      status: "active"
+      status: "active",
     };
     const mockFarmerProduct = {
       id: 1,
@@ -315,7 +315,7 @@ describe("generateOrdersFromNeededProducts", () => {
       productId: 1,
       quantity: 2000,
       unit: "g",
-      save: jest.fn()
+      save: jest.fn(),
     };
 
     (NeededProduct.findAll as jest.Mock).mockResolvedValue([mockNeededProduct]);
