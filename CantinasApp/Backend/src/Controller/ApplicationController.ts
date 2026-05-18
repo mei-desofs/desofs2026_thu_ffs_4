@@ -83,7 +83,10 @@ export class ApplicationController {
     if (isNaN(applicationId)) {
       return res.status(400).json({ error: "Invalid applicationId" });
     }
-    const filename: string = req.params.filename;
+    const filenameParam = req.params.filename;
+    const filename: string = Array.isArray(filenameParam)
+      ? filenameParam[0]
+      : filenameParam;
     if (filename == null || filename.length == 0) {
       return res.status(400).json({ error: "Invalid filename" });
     }
