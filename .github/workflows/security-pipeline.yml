@@ -7,67 +7,68 @@ on:
     branches: [main, develop]
 
 # Evita execuções duplicadas do mesmo commit/PR
-# (boa prática DevOps: reduz custo e ruído no CI)
 concurrency:
   group: security-pipeline-${{ github.ref }}
   cancel-in-progress: true
 
-# Princípio do menor privilégio (security best practice)
+# Princípio do menor privilégio
 permissions:
   contents: read
 
-# Define diretório base do backend (TypeScript project)
+# Diretório base do backend
 defaults:
   run:
     working-directory: CantinasApp/Backend
 
 # =========================================================
-# JOBS FLOW (PARALLEL SECURITY AFTER TESTS)
+# JOBS FLOW
 #
 # build
-#   ↓
-# tests (coverage gate)
-#   ↓
-#   ├── sbom
+#   ├── tests
 #   ├── config-validation
+#   ├── dependency-review
+#   └── secret-scan
+#
+# tests
+#   ├── sbom
 #   ├── sast-eslint
 #   ├── sast-semgrep
 #   ├── codeql
 #   ├── sca-npm-audit
-#   ├── secret-scan
 #   └── artifact-scan → dast-zap
 # =========================================================
 
 jobs:
-  # =========================
-  # BUILD STAGE
-  # =========================
+  # =========================================================
+  # BUILD
+  # =========================================================
   build:
     name: Build & Type Check
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      # Setup Node + cache de dependências (performance CI)
-      - uses: actions/setup-node@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
           cache-dependency-path: CantinasApp/Backend/package-lock.json
 
-      # Instala dependências de forma determinística (npm ci)
+      # Instalação determinística
       - name: Install dependencies
         run: npm ci
 
-      # Validação de compilação TypeScript (early failure detection)
+      # Early failure detection
       - name: TypeScript build
         run: npm run build
 
-  # =========================
+  # =========================================================
   # UNIT TESTS + COVERAGE
-  # =========================
+  # =========================================================
   tests:
     name: Unit Tests
     runs-on: ubuntu-latest
@@ -75,9 +76,11 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
@@ -86,17 +89,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Execução de testes automatizados (test plan execution)
-      # + geração de coverage (evidência de qualidade de código)
+      # Test execution + coverage evidence
       - name: Run tests with coverage
         run: npm test -- --coverage
 
-      # =========================
+      # =========================================================
       # COVERAGE QUALITY GATE
-      # =========================
+      # =========================================================
       - name: Coverage Gate (>= 70%)
         run: |
-          echo "Checking test coverage..."
+          echo "Checking coverage threshold..."
 
           COVERAGE=$(node -p "
             const fs=require('./coverage/coverage-summary.json');
@@ -105,23 +107,90 @@ jobs:
 
           echo "Coverage: $COVERAGE%"
 
-          if (( $(echo "$COVERAGE < 70" | bc -l) )); then
-            echo "❌ Coverage below 70% threshold"
-            exit 1
-          fi
+          node -e "
+            const coverage=parseFloat(process.argv[1]);
 
-          echo "✅ Coverage OK"
+            if (coverage < 70) {
+              console.error('❌ Coverage below 70%');
+              process.exit(1);
+            }
 
-      # Artifact para auditoria e evidência no relatório
-      - name: Upload coverage
+            console.log('✅ Coverage OK');
+          " "$COVERAGE"
+
+      # Evidence artifact
+      - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: CantinasApp/Backend/coverage
+          retention-days: 30
 
-  # =========================
-  # SOFTWARE INVENTORY (SBOM)
-  # =========================
+  # =========================================================
+  # CONFIG VALIDATION
+  # =========================================================
+  config-validation:
+    name: Config Validation
+    runs-on: ubuntu-latest
+    needs: build
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate configuration files
+        run: |
+          if [ ! -f .env.example ]; then
+            echo "⚠️ No .env.example found"
+          else
+            echo "✅ .env.example exists"
+          fi
+
+  # =========================================================
+  # DEPENDENCY REVIEW (PR SECURITY)
+  # =========================================================
+  dependency-review:
+    name: Dependency Review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    needs: build
+    timeout-minutes: 10
+
+    permissions:
+      contents: read
+      pull-requests: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Detects risky dependencies introduced in PRs
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+
+  # =========================================================
+  # SECRET SCANNING
+  # =========================================================
+  secret-scan:
+    name: Secret Scanning
+    runs-on: ubuntu-latest
+    needs: build
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Detect API keys, tokens and secrets
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # =========================================================
+  # SBOM GENERATION
+  # =========================================================
   sbom:
     name: SBOM Generation
     runs-on: ubuntu-latest
@@ -129,9 +198,11 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
@@ -140,49 +211,20 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Software Bill of Materials (SBOM)
-      # -> inventory de dependências (supply chain security)
+      # Software Bill of Materials
       - name: Generate SBOM (CycloneDX)
         run: npx @cyclonedx/cyclonedx-npm --output-file sbom.xml
 
-      # Artifact para auditoria e rastreabilidade
       - name: Upload SBOM
         uses: actions/upload-artifact@v4
         with:
           name: sbom
-          path: sbom.xml
+          path: CantinasApp/Backend/sbom.xml
+          retention-days: 30
 
-  # =========================
-  # CONFIGURATION VALIDATION
-  # =========================
-  config-validation:
-    name: Config Validation
-    runs-on: ubuntu-latest
-    needs: build
-    timeout-minutes: 5
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Install dependencies
-        run: npm ci
-
-      # Validação simples de configuração do ambiente
-      # (evita missing config em runtime)
-      - name: Check optional config files
-        run: |
-          if [ ! -f .env.example ]; then
-            echo "⚠️ No .env.example found (skipping validation)"
-          fi
-          exit 0
-
-  # =========================
-  # SAST - ESLINT (CODE QUALITY + SECURITY)
-  # =========================
+  # =========================================================
+  # SAST — ESLINT
+  # =========================================================
   sast-eslint:
     name: SAST — ESLint Security
     runs-on: ubuntu-latest
@@ -190,9 +232,11 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
@@ -204,27 +248,26 @@ jobs:
       - name: Create reports directory
         run: mkdir -p reports
 
-      # QUALITY GATE: falha se houver problemas de lint/security
+      # QUALITY GATE
       - name: Run ESLint
         run: npm run lint
 
-      # Geração de relatório (evidência para auditoria)
+      # Evidence generation
       - name: Generate ESLint report
         if: always()
         run: npm run lint:report || true
 
-      # Upload do relatório para rastreabilidade
       - name: Upload ESLint report
-        uses: actions/upload-artifact@v4
         if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: eslint-sast-report
           path: CantinasApp/Backend/reports/eslint-report.json
           retention-days: 30
 
-  # =========================
-  # SAST - SEMGREP (SECURITY RULES)
-  # =========================
+  # =========================================================
+  # SAST — SEMGREP
+  # =========================================================
   sast-semgrep:
     name: SAST — Semgrep
     runs-on: ubuntu-latest
@@ -235,13 +278,14 @@ jobs:
       image: semgrep/semgrep
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      # QUALITY GATE: falha se forem detetadas vulnerabilidades
-      - name: Run Semgrep scan (gate)
+      # QUALITY GATE
+      - name: Run Semgrep scan
         run: semgrep scan --config=auto src
 
-      # Geração de relatório (mesmo em caso de falha parcial)
+      # Evidence generation
       - name: Generate Semgrep JSON report
         if: always()
         run: semgrep scan --config=auto --json --output=semgrep-report.json src || true
@@ -254,9 +298,9 @@ jobs:
           path: semgrep-report.json
           retention-days: 30
 
-  # =========================
-  # CODEQL (ADVANCED SAST)
-  # =========================
+  # =========================================================
+  # CODEQL
+  # =========================================================
   codeql:
     name: CodeQL Analysis
     runs-on: ubuntu-latest
@@ -269,31 +313,33 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      # Deep semantic security analysis (data-flow, taint analysis)
+      # Deep semantic analysis
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
           languages: javascript-typescript
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: "20"
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
+      - name: Build application
         run: npm run build
 
-      # Analysis results enviados para GitHub Security tab
+      # Uploads results to GitHub Security tab
       - name: Analyze
         uses: github/codeql-action/analyze@v3
 
-  # =========================
-  # SCA - DEPENDENCIES SECURITY
-  # =========================
+  # =========================================================
+  # SCA — npm audit
+  # =========================================================
   sca-npm-audit:
     name: SCA — npm audit
     runs-on: ubuntu-latest
@@ -301,9 +347,11 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
@@ -315,13 +363,13 @@ jobs:
       - name: Create reports directory
         run: mkdir -p reports
 
-      # Geração de relatório completo (audit trail)
-      - name: Run npm audit (full JSON report)
+      # Full JSON report for evidence
+      - name: Generate npm audit report
         run: npm audit --json > reports/npm-audit-report.json || true
 
-      # QUALITY GATE: falha se HIGH/CRITICAL vulnerabilities existirem
+      # QUALITY GATE
       - name: Fail on HIGH or CRITICAL vulnerabilities
-        run: npm audit --audit-level=high --production || true
+        run: npm audit --audit-level=high --omit=dev
 
       - name: Upload npm audit report
         uses: actions/upload-artifact@v4
@@ -330,134 +378,98 @@ jobs:
           path: CantinasApp/Backend/reports/npm-audit-report.json
           retention-days: 30
 
-  # =========================
-  # DEPENDENCY REVIEW (PR SECURITY)
-  # =========================
-  dependency-review:
-    name: Dependency Review
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    needs: tests
-    timeout-minutes: 10
-
-    permissions:
-      contents: read
-      pull-requests: read
-
-    steps:
-      - uses: actions/checkout@v4
-
-      # Analisa risco de dependências introduzidas no PR
-      - name: Dependency Review
-        uses: actions/dependency-review-action@v4
-
-  # =========================
-  # SECRET SCANNING
-  # =========================
-  secret-scan:
-    name: Secret Scanning
-    runs-on: ubuntu-latest
-    needs: tests
-    timeout-minutes: 10
-
-    steps:
-      - uses: actions/checkout@v4
-
-      # Detecta API keys, tokens e passwords no código
-      - name: Run Gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  # =========================
-  # ARTIFACT SCANNING (TRIVY + DOCKER IMAGE)
-  # =========================
+  # =========================================================
+  # ARTIFACT SCANNING — TRIVY
+  # =========================================================
   artifact-scan:
     name: Artifact Scanning — Docker Image (Trivy)
     runs-on: ubuntu-latest
     needs: tests
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      # 1️⃣ Build do artefacto deployável (Docker image)
+      # Build deployable artifact
       - name: Build backend image
         run: docker build -t cantinas-backend .
 
-      # 2️⃣ Security scanning do artefacto (SCA at image level)
-      # Deteta vulnerabilidades em:
-      # - OS layers
-      # - packages dentro da imagem
-      # - CVEs conhecidas
+      # Image vulnerability scanning
       - name: Scan Docker image with Trivy
-        uses: aquasecurity/trivy-action@master
-        continue-on-error: true
+        uses: aquasecurity/trivy-action@0.28.0
         with:
           image-ref: cantinas-backend
           format: table
           exit-code: 1
           severity: CRITICAL,HIGH
+          ignore-unfixed: true
 
-      # 3️⃣ Guardar imagem para reutilização (evita rebuild no ZAP)
+      # Save image for reuse in DAST stage
       - name: Save Docker image
         run: docker save cantinas-backend -o image.tar
 
-      # 4️⃣ Upload como artifact entre jobs
       - name: Upload Docker image artifact
         uses: actions/upload-artifact@v4
         with:
           name: docker-image
           path: CantinasApp/Backend/image.tar
+          retention-days: 1
 
-  # =========================
-  # DYNAMIC ANALYSIS (DAST)
-  # =========================
+  # =========================================================
+  # DAST — OWASP ZAP
+  # =========================================================
   dast-zap:
     name: DAST — OWASP ZAP
     runs-on: ubuntu-latest
     needs: artifact-scan
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      # 1️⃣ Download Docker image built no artifact-scan
+      # Download built image
       - name: Download Docker image
         uses: actions/download-artifact@v4
         with:
           name: docker-image
           path: CantinasApp/Backend
 
-      # 2️⃣ Load image (sem rebuild!)
+      # Load image
       - name: Load Docker image
         run: docker load -i image.tar
 
-      # 3️⃣ Run application for dynamic testing
+      # Start application
       - name: Run backend container
         run: |
-          docker run -d --network=host -p 3000:3000 --name backend cantinas-backend
-          sleep 10
-          echo "Checking if port 3000 is listening..."
-          netstat -tuln | grep 3000 || echo "Port 3000 not listening, checking container logs..."
+          docker run -d -p 3000:3000 --name backend cantinas-backend
+
+          echo "Waiting for application startup..."
+          sleep 15
+
+          docker ps
           docker logs backend || true
 
-      # 4️⃣ OWASP ZAP (black-box testing)
+      # Dynamic security testing
       - name: OWASP ZAP Baseline Scan
         uses: zaproxy/action-baseline@v0.12.0
-        continue-on-error: true
         with:
           target: "http://localhost:3000"
+          fail_action: true
 
-      # Evidence for report
+      # Evidence artifact
       - name: Upload ZAP report
-        uses: actions/upload-artifact@v4
         if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: zap-report
           path: report_html.html
+          retention-days: 30
 
-      # Cleanup runtime
+      # Cleanup
       - name: Stop container
         if: always()
-        run: docker stop backend && docker rm backend
+        run: |
+          docker stop backend || true
+          docker rm backend || true
