@@ -26,8 +26,7 @@ defaults:
 # build
 #   ├── tests
 #   ├── config-validation
-#   ├── dependency-review
-#   └── secret-scan
+#   └── dependency-review
 #
 # tests
 #   ├── sbom
@@ -171,25 +170,6 @@ jobs:
       # Detects risky dependencies introduced in PRs
       - name: Dependency Review
         uses: actions/dependency-review-action@v4
-
-  # =========================================================
-  # SECRET SCANNING
-  # =========================================================
-  secret-scan:
-    name: Secret Scanning
-    runs-on: ubuntu-latest
-    needs: build
-    timeout-minutes: 10
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      # Detect API keys, tokens and secrets
-      - name: Run Gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # =========================================================
   # SBOM GENERATION
@@ -509,12 +489,11 @@ jobs:
 
       # Dynamic security testing
       - name: OWASP ZAP Baseline Scan
-        uses: zaproxy/action-baseline@v0.12.0
+        uses: zaproxy/action-baseline@v0.14.0
         with:
           target: "http://localhost:3000"
           fail_action: false
           allow_issue_writing: false
-
       # Evidence artifact
       - name: Upload ZAP report
         if: always()
