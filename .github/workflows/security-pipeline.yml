@@ -51,6 +51,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Ensure workspace is writable
+        run: sudo chmod -R a+rwX "$GITHUB_WORKSPACE"
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -446,7 +449,20 @@ jobs:
           docker run -d -p 3000:3000 --name backend cantinas-backend
 
           echo "Waiting for application startup..."
-          sleep 15
+          for i in {1..20}; do
+            if curl -s -o /dev/null http://localhost:3000; then
+              echo "Backend is responding."
+              break
+            fi
+            sleep 3
+          done
+
+          if ! curl -s -o /dev/null http://localhost:3000; then
+            echo "Backend did not start in time."
+            docker ps
+            docker logs backend || true
+            exit 1
+          fi
 
           docker ps
           docker logs backend || true
