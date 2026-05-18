@@ -54,9 +54,6 @@ jobs:
       - name: Ensure workspace is writable
         run: sudo chmod -R a+rwX "$GITHUB_WORKSPACE"
 
-      - name: Ensure workspace is writable
-        run: sudo chmod -R a+rwX "$GITHUB_WORKSPACE"
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
