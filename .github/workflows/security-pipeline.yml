@@ -507,6 +507,9 @@ jobs:
           docker ps
           docker logs backend || true
 
+      - name: Fix workspace permissions for ZAP
+        run: sudo chmod -R 777 "$GITHUB_WORKSPACE"
+
       # Dynamic security testing
       - name: OWASP ZAP Baseline Scan
         uses: zaproxy/action-baseline@v0.12.0
@@ -514,7 +517,6 @@ jobs:
           target: "http://localhost:3000"
           fail_action: false
           allow_issue_writing: false
-          artifact_name: zap_scan
 
       # Evidence artifact
       - name: Upload ZAP report
