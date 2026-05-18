@@ -1,8 +1,7 @@
-const cron = require("node-cron");
+import cron from "node-cron";
 import { ReservationService } from "../Service/ReservationService";
 
 const reservationService = new ReservationService();
-
 
 // Job de TESTE - Verifica reservas ativas para uma data específica
 
@@ -12,15 +11,23 @@ export function startMarkUnconsumedReservationsJob() {
     try {
       // Data específica para teste: 25/12/2025
       const testDate = new Date(2026, 0, 16); // Mês 11 = Dezembro (0-indexed)
-      console.log(" [TESTE] Iniciando verificação de marcações não consumidas (18:15)...");
+      console.log(
+        " [TESTE] Iniciando verificação de marcações não consumidas (18:15)...",
+      );
       console.log(` [TESTE] Verificar marcações do dia seleciondo`);
-      const result = await reservationService.markUnconsumedReservations(testDate);
+      const result =
+        await reservationService.markUnconsumedReservations(testDate);
       console.log(` [TESTE] ${result.message}`);
     } catch (error) {
-      console.error("❌ [TESTE] Erro ao marcar marcações não consumidas:", error);
+      console.error(
+        "❌ [TESTE] Erro ao marcar marcações não consumidas:",
+        error,
+      );
     }
   });
-  console.log("🧪 Job de TESTE agendado para 18:15 - Verifica marcações do dia 25/12/2025");
+  console.log(
+    "🧪 Job de TESTE agendado para 18:15 - Verifica marcações do dia 25/12/2025",
+  );
 }
 
 /**
@@ -32,21 +39,30 @@ export function startMarkUnconsumedReservationsJob() {
  */
 export function scheduleTestJob(hour: number, minute: number) {
   const cronExpression = `${minute} ${hour} * * *`;
-  console.log(`🧪 Agendando job de TESTE para ${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`);
-  
-  const task = cron.schedule(cronExpression, async () => {
-    try {
-      console.log(`🔄 [TESTE] Iniciando verificação de marcações não consumidas (${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')})...`);
-      const result = await reservationService.markUnconsumedReservations();
-      console.log(`✅ [TESTE] ${result.message}`);
-    } catch (error) {
-      console.error("❌ [TESTE] Erro ao marcar marcações não consumidas:", error);
-    }
-  }, {
-    scheduled: true,
-    timezone: "Europe/Lisbon"
-  });
+  console.log(
+    `🧪 Agendando job de TESTE para ${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`,
+  );
+
+  const task = cron.schedule(
+    cronExpression,
+    async () => {
+      try {
+        console.log(
+          `🔄 [TESTE] Iniciando verificação de marcações não consumidas (${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")})...`,
+        );
+        const result = await reservationService.markUnconsumedReservations();
+        console.log(`✅ [TESTE] ${result.message}`);
+      } catch (error) {
+        console.error(
+          "❌ [TESTE] Erro ao marcar marcações não consumidas:",
+          error,
+        );
+      }
+    },
+    {
+      timezone: "Europe/Lisbon",
+    },
+  );
 
   return task;
 }
-
