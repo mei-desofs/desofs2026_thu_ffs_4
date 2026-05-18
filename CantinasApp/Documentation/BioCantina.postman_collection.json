@@ -1,0 +1,1610 @@
+{
+  "info": {
+    "_postman_id": "9d328537-d1b5-4478-bbe2-7fe381394d44",
+    "name": "BioCantina",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "39086798",
+    "_collection_link": "https://go.postman.co/collection/39086798-9d328537-d1b5-4478-bbe2-7fe381394d44?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "createACC",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"CanteenManager\",\r\n  \"email\": \"cm@email.com\",\r\n  \"password\": \"123456\",\r\n  \"role\": \"CanteenManager\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/users/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "users",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "start quaratine",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/users/startQuarantine/7",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "users",
+                "startQuarantine",
+                "7"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "end quaratine",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/users/endQuarantine/28",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "users",
+                "endQuarantine",
+                "28"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auxiliar",
+      "item": [
+        {
+          "name": "New UNIT",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"unit\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/auxiliar/unit",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "auxiliar",
+                "unit"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get unit",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/auxiliar/unit",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "auxiliar",
+                "unit"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "new allergen",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"Proteína do leite\" }\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/auxiliar/allergen",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "auxiliar",
+                "allergen"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get allergen",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"Lactose\" }\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/auxiliar/allergen",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "auxiliar",
+                "allergen"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "new nutrition",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"Calorias\" }\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/auxiliar/nutrition",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "auxiliar",
+                "nutrition"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get nutrition",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"Gordura\" }\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/auxiliar/nutrition",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "auxiliar",
+                "nutrition"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "new product type",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"Cereal\" }\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/auxiliar/product-type",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "auxiliar",
+                "product-type"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get product type",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"Laticínios\" }\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/auxiliar/product-type",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "auxiliar",
+                "product-type"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create menu type",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"School\" }\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/auxiliar/menu-type",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "auxiliar",
+                "menu-type"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get all menu types",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://localhost:3000/auxiliar/menu-type",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "auxiliar",
+                "menu-type"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create meal type",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"Lunch\" }\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/auxiliar/meal-type",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "auxiliar",
+                "meal-type"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get all meal types",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://localhost:3000/auxiliar/meal-type",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "auxiliar",
+                "meal-type"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create dish type",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"Meat\" }\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/auxiliar/dish-type",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "auxiliar",
+                "dish-type"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get all dish types",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://localhost:3000/auxiliar/dish-type",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "auxiliar",
+                "dish-type"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get ordered suppliers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/auxiliar/ordered-suppliers",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "auxiliar",
+                "ordered-suppliers"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Product",
+      "item": [
+        {
+          "name": "create  product",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Alho\",\r\n    \"typeId\": 2,\r\n    \"unitId\": 2,\r\n    \"bio\": true,\r\n    \"nutrition\": [\r\n      { \"typeId\": 1, \"percentage\": 6.4 },  // Proteína\r\n      { \"typeId\": 2, \"percentage\": 33 },   // Carboidratos\r\n      { \"typeId\": 4, \"percentage\": 11 }   // Calorias\r\n    ],\r\n    \"allergens\": []\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/products",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get product",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/products/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "products",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Application",
+      "item": [
+        {
+          "name": "Create Application",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "userId",
+                  "value": "24",
+                  "type": "text",
+                  "uuid": "dab25809-7e2d-4913-bfbe-9a6d689a367d"
+                },
+                {
+                  "key": "businessEmail",
+                  "value": "visitor4@email.com",
+                  "type": "text",
+                  "uuid": "badaf5d3-04d5-4632-9959-ae308784e479"
+                },
+                {
+                  "key": "businessPhone",
+                  "value": "999999999",
+                  "type": "text",
+                  "uuid": "815469be-abb3-4202-b620-43dd28ba9610"
+                },
+                {
+                  "key": "name",
+                  "value": "Visitor2",
+                  "type": "text",
+                  "uuid": "4dd2f8ee-7310-46a4-a78a-40e4776294f7"
+                },
+                {
+                  "key": "location",
+                  "value": "TEETE",
+                  "type": "text",
+                  "uuid": "b8525070-a2b8-4a68-aa1d-5b0805db8cbf"
+                },
+                {
+                  "key": "supplierComment",
+                  "value": "opcional",
+                  "type": "text",
+                  "uuid": "991917bc-c297-4545-9509-39c33d560a1b"
+                },
+                {
+                  "key": "farmerProducts",
+                  "value": "[{\"week\":1,\"products\":[{\"productId\":1,\"quantity\":3,\"unit\":\"kg\"}]}]",
+                  "type": "text",
+                  "uuid": "9c6f03fc-81d7-497e-8e1b-41b52a8f6e8b"
+                },
+                {
+                  "key": "documents",
+                  "type": "file",
+                  "uuid": "21e5e04c-880e-4d81-836f-69c1e2f131df",
+                  "src": "/C:/Users/Utilizador/Downloads/ENGREQ_Grupo51_SRS v1.1.pdf"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:3000/applications",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "applications"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Application",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"userId\": 8,\r\n    \"businessEmail\": \"visitor2@email.com\",\r\n    \"businessPhone\": \"999999999\",\r\n    \"documentsSubmitted\": [\r\n        \"menus.png\"\r\n    ],\r\n    \"name\": \"Visitor2\",\r\n    \"location\": \"teste1\",\r\n    \"supplierComment\": \"Comentário 2\",\r\n    \"productsProposed\": [\r\n        {\r\n            \"week\": 1,\r\n            \"products\": [\r\n                {\r\n                    \"productId\": 2,\r\n                    \"quantity\": 10,\r\n                    \"unit\": \"kg\"\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/applications/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "applications",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get by user id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/applications/user/7",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "applications",
+                "user",
+                "7"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get all",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/applications",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "applications"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Batch",
+      "item": [
+        {
+          "name": "create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": 1,\r\n  \"expirationDate\": \"2026-06-15\",\r\n  \"productId\": 1,\r\n  \"quantity\": 12.5,\r\n  \"unitId\": 1,\r\n  \"bio\": true\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/batches",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "batches"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get all",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/batches",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "batches"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/batches/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "batches",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Stock",
+      "item": [
+        {
+          "name": "create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": 1,\r\n  \"updatedDate\": \"2025-01-10\",\r\n  \"minimumCapacity\": 20,\r\n  \"maximumCapacity\": 100,\r\n  \"currentQuantity\": 50,\r\n  \"batches\": [1, 2],\r\n  \"products\": [\r\n    { \"productId\": 1, \"quantity\": 5, \"unitId\": 1 },\r\n    { \"productId\": 2, \"quantity\": 2, \"unitId\": 2 }\r\n  ]\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/stocks",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "stocks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get all",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/stocks",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "stocks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/stocks/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "stocks",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Menu",
+      "item": [
+        {
+          "name": "create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": 1,\r\n  \"menuTypeId\": 1,\r\n  \"initialDate\": \"2026-01-11\",\r\n  \"finalDate\": \"2026-01-20\",\r\n  \"meals\": [1, 2]\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/menus",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "menus"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get all",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/menus",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "menus"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/menus/21",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "menus",
+                "21"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Meal",
+      "item": [
+        {
+          "name": "create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"mealTypeId\": 1,\r\n  \"name\": \"Chiken and fries\",\r\n  \"date\": \"2026-01-14\",\r\n  \"dishId\": 1\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/meals",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "meals"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get all",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/meals",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "meals"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/meals/298",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "meals",
+                "298"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Dish",
+      "item": [
+        {
+          "name": "create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"dishTypeId\": 1,\r\n  \"name\": \"Chiken wings2 with french fries and bbq sauce\",\r\n  \"recipeId\": 16,\r\n  \"mainProductsId\": [6,11]\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/dishes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "dishes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get all",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Leite\",\r\n  \"typeId\": 3,\r\n  \"unitId\": 3,\r\n  \"bio\": true,\r\n  \"nutrition\": [\r\n    { \"typeId\": 1, \"percentage\": 3 },\r\n    { \"typeId\": 2, \"percentage\": 5 },\r\n    { \"typeId\": 3, \"percentage\": 1 }\r\n  ],\r\n  \"allergens\": [1]\r\n}\r\n"
+            },
+            "url": {
+              "raw": "http://localhost:3000/dishes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "dishes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/dishes/10",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "dishes",
+                "10"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "recomendations",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://localhost:3000/dishes/recommendationsList/2025-12-10",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "dishes",
+                "recommendationsList",
+                "2025-12-10"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Recipe",
+      "item": [
+        {
+          "name": "create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"ingredients\": [9, 10, 11],\r\n  \"description\": \"O peru assado com cenouras faz-se temperando o peru com sal, pimenta e azeite, cortando as cenouras em rodelas grossas e levando tudo ao forno pré-aquecido a 190 graus durante cerca de quarenta a quarenta e cinco minutos, até dourar. No fim rega-se a carne com o próprio molho do assado.\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/recipes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "recipes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get all",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/recipes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "recipes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/recipes/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "recipes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Ingredient",
+      "item": [
+        {
+          "name": "create ingredient",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"productId\": 12,\r\n  \"quantity\": 120,\r\n  \"unitId\": 2\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/ingredients",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "ingredients"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get all",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/ingredients",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "ingredients"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/ingredients/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "ingredients",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Statistics",
+      "item": [
+        {
+          "name": "get Bio products percentage for receipe",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://localhost:3000/statistics",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "statistics"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"userId\": 22,\r\n  \"title\": \"Não há fornecedores para o produto encomendado\",\r\n  \"body\": \"Deu merda amigo\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/notifications",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "notifications"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/notifications/user/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "notifications",
+                "user",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "mark as read",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/notifications/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "notifications",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"userId\": 1,\r\n  \"neededProductId\": 1,\r\n  \"productId\": 3,\r\n  \"unit\": \"unit\",\r\n  \"quantity\": 50\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/orders",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "orders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"userId\": 1,\r\n  \"neededProductId\": 1,\r\n  \"productId\": 3,\r\n  \"unit\": \"unit\",\r\n  \"quantity\": 50\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/orders/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "orders",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "NeededProduct",
+      "item": [
+        {
+          "name": "create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"date\": \"2025-12-20\",\r\n  \"productId\": 3,\r\n  \"unit\": \"unit\",\r\n  \"quantity\": 50\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/needed-products",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "needed-products"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Parishes",
+      "item": [
+        {
+          "name": "create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Gondar\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/parishes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "parishes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "quarantine",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/parishes/quarantineParish",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "parishes",
+                "quarantineParish"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "take of quarantine",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/parishes/takeParishOfQuarantine",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "parishes",
+                "takeParishOfQuarantine"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "canteen",
+      "item": [
+        {
+          "name": "get all",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"userId\": 1,\r\n  \"neededProductId\": 1,\r\n  \"productId\": 3,\r\n  \"unit\": \"unit\",\r\n  \"quantity\": 50\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/canteens/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "canteens",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "login",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"email\": \"diogo@email.com\",\r\n  \"password\": \"123456\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/users/login",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "users",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
