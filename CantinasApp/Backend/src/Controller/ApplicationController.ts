@@ -3,6 +3,7 @@ import { ApplicationService } from "../Service/ApplicationService";
 import Joi from "joi";
 import fs from "fs";
 import path from "path";
+import { safeFilename } from "../utils/fileUtils";
 
 const service = new ApplicationService();
 
@@ -188,7 +189,7 @@ export class ApplicationController {
 
       // Renomear ficheiros com userId-applicationId-nomeOriginal
       const documents = files.map((f) => {
-        const newFilename = `${userId}-${applicationId}-${f.originalname}`;
+        const newFilename = `${userId}-${applicationId}-${safeFilename(f.originalname)}`;
         const newPath = path.join("uploads", newFilename);
 
         fs.renameSync(f.path, newPath); // mover/renomear ficheiro
