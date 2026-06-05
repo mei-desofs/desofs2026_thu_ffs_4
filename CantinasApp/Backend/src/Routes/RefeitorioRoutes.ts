@@ -1,11 +1,10 @@
 import { Router } from "express";
 import { RefeitorioController } from "../Controller/RefeitorioController";
-import { authMiddleware } from "../middlewares/authMiddleware";
-import { authorizeRoles } from "../middlewares/authorizeRoles";
+import { authLimiter } from "../middlewares/rateLimit";
 
 const router = Router();
 
-router.post("/", RefeitorioController.createRefeitorio);
+router.post("/", authLimiter, RefeitorioController.createRefeitorio);
 router.get("/", RefeitorioController.getAllRefeitorios);
 router.get("/:id", RefeitorioController.getRefeitorioById);
 
