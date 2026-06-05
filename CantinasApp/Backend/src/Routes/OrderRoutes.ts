@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { OrderController } from "../Controller/OrderController";
+import { authLimiter } from "../middlewares/rateLimit";
 
 const router = Router();
 
-router.post("/", OrderController.create);
+router.post("/", authLimiter, OrderController.create);
 router.put("/:id", OrderController.update);
 router.patch("/:id/status", OrderController.updateStatus);
 router.delete("/:id", OrderController.delete);

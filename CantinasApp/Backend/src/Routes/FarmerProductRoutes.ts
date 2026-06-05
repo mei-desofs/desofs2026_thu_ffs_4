@@ -1,13 +1,14 @@
 import { Router } from "express";
 import { FarmerProductController } from "../Controller/FarmerProductController";
+import { authLimiter, apiLimiter } from "../middlewares/rateLimit";
 
 const router = Router();
 
 // Criar produtos do agricultor para uma aplicação
-router.post("/", FarmerProductController.create);
+router.post("/", authLimiter, FarmerProductController.create);
 
 // Listar todos
-router.get("/", FarmerProductController.list);
+router.get("/", apiLimiter, FarmerProductController.list);
 
 // Listar por applicationId
 router.get("/application/:applicationId", FarmerProductController.getByApplication);
