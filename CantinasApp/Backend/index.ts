@@ -3,7 +3,8 @@ dotenv.config();
 
 import express from "express";
 import cors from "cors";
-import { sequelize } from "./src/Config/db"; 
+import helmet from "helmet";
+import { sequelize } from "./src/Config/db";
 import userRoutes from "./src/Routes/UserRoutes";
 import auxiliarRoutes from "./src/Routes/AuxiliarRoutes";
 import productRoutes from "./src/Routes/ProductRoutes";
@@ -29,24 +30,38 @@ import RefeitorioRoutes from "./src/Routes/RefeitorioRoutes";
 import CanteenRoutes from "./src/Routes/CanteenRoutes";
 import ProducerStatisticsRoutes from "./src/Routes/ProducerStatisticsRoutes";
 import "./src/Model/associations";
-import bootstrap from "./src/Bootstrap";
 import { startMarkUnconsumedReservationsJob } from "./src/Jobs/markUnconsumedReservations";
 import { startWeeklyMenuPlanningJob } from "./src/Jobs/weeklyMenuPlanning";
 import path from "path";
-import { Menu } from "./src/Model/Menu";
-import { Order } from "./src/Model/Order";
-import { NeededProduct } from "./src/Model/NeededProduct";
-import { Notification } from "./src/Model/Notification";
-import { AverageReservation } from "./src/Model/AverageReservation";  
+import logger from "./src/utils/logger";
+import { errorHandler } from "./src/middlewares/errorHandler";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// --- CORS ---
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'"],
+      imgSrc: ["'self'", "data:"],
+      connectSrc: ["'self'"],
+      fontSrc: ["'self'"],
+      objectSrc: ["'none'"],
+      frameAncestors: ["'none'"],
+    },
+  },
+  crossOriginEmbedderPolicy: false,
+}));
+
+const allowedOrigin = process.env.CORS_ORIGIN || "http://localhost:5173";
+
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: allowedOrigin,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-  credentials: true
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
 }));
 
 app.use(express.json());
@@ -79,28 +94,24 @@ app.get("/", (req, res) => {
   res.send("Backend TypeScript + MySQL a funcionar!");
 });
 
+app.use(errorHandler);
+
 const startServer = async () => {
   try {
     await sequelize.authenticate();
-    console.log("✅ Ligado ao MySQL com sucesso!");
-    
-    await sequelize.sync({alter:false});
-    console.log("✅ Tabelas sincronizadas!");
+    logger.info("Connected to MySQL successfully");
 
-    // Executa o bootstrap antes de iniciar o servidor
-    //await bootstrap();
-    //console.log("✅ Bootstrap executado!");
+    await sequelize.sync({ alter: false });
+    logger.info("Tables synced");
 
-    // Inicia os jobs agendados
     startMarkUnconsumedReservationsJob();
-
     startWeeklyMenuPlanningJob();
-    
+
     app.listen(PORT, () => {
-      console.log(`🚀 Servidor a correr na porta ${PORT}`);
+      logger.info(`Server running on port ${PORT}`);
     });
   } catch (error) {
-    console.error("❌ Erro ao iniciar:", error);
+    logger.error({ event: "startup_error", error });
     process.exit(1);
   }
 };

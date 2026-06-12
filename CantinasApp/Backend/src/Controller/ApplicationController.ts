@@ -187,14 +187,18 @@ export class ApplicationController {
       const applicationId = app.id;
       const files = (req.files as Express.Multer.File[]) || [];
 
-      // Renomear ficheiros com userId-applicationId-nomeOriginal
+      const uploadsDir = path.resolve("uploads");
       const documents = files.map((f) => {
         const newFilename = `${userId}-${applicationId}-${safeFilename(f.originalname)}`;
-        const newPath = path.join("uploads", newFilename);
+        const resolvedPath = path.resolve(uploadsDir, newFilename);
 
-        fs.renameSync(f.path, newPath); // mover/renomear ficheiro
+        if (!resolvedPath.startsWith(uploadsDir + path.sep)) {
+          throw new Error("INVALID_FILE_PATH");
+        }
 
-        return { filename: f.originalname, path: newPath };
+        fs.renameSync(f.path, resolvedPath);
+
+        return { filename: f.originalname, path: path.join("uploads", newFilename) };
       });
 
       // Atualizar aplicação com documentos
@@ -225,11 +229,17 @@ export class ApplicationController {
       );
 
       const files = (req.files as Express.Multer.File[]) || [];
+      const uploadsDir2 = path.resolve("uploads");
       const newDocuments = files.map((f) => {
-        const newFilename = `${existingApp.userId}-${applicationId}-${f.originalname}`;
-        const newPath = path.join("uploads", newFilename);
-        fs.renameSync(f.path, newPath);
-        return { filename: f.originalname, path: newPath };
+        const newFilename = `${existingApp.userId}-${applicationId}-${safeFilename(f.originalname)}`;
+        const resolvedPath2 = path.resolve(uploadsDir2, newFilename);
+
+        if (!resolvedPath2.startsWith(uploadsDir2 + path.sep)) {
+          throw new Error("INVALID_FILE_PATH");
+        }
+
+        fs.renameSync(f.path, resolvedPath2);
+        return { filename: f.originalname, path: path.join("uploads", newFilename) };
       });
 
       const documentsSubmitted = existingApp.documentsSubmitted

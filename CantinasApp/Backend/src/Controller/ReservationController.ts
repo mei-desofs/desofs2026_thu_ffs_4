@@ -39,6 +39,7 @@ export class ReservationController {
             if (err.message === "MEAL_NOT_FOUND") return res.status(404).json({ error: "Meal not found" });
             if (err.message === "USER_NOT_FOUND") return res.status(404).json({ error: "User not found" });
             if (err.message === "REFEITORIO_NOT_FOUND") return res.status(404).json({ error: "Refeitório not found" });
+            if (err.message === "DUPLICATE_RESERVATION") return res.status(409).json({ error: "Reservation already exists for this meal" });
             res.status(500).json({ error: "Internal server error" });
         }
     }
