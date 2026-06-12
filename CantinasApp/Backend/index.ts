@@ -49,8 +49,13 @@ app.use(helmet({
       connectSrc: ["'self'"],
       fontSrc: ["'self'"],
       objectSrc: ["'none'"],
+      baseUri: ["'none'"],
       frameAncestors: ["'none'"],
     },
+  },
+  strictTransportSecurity: {
+    maxAge: 31536000,
+    includeSubDomains: true,
   },
   crossOriginEmbedderPolicy: false,
 }));
