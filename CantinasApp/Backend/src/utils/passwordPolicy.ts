@@ -1,3 +1,5 @@
+import crypto from "crypto";
+
 export const MIN_PASSWORD_LENGTH = 8;
 
 export const PASSWORD_CONTEXT_WORDS = [
@@ -128,7 +130,6 @@ const normalize = (value: string) => value.toLowerCase();
 const BREACHED_PASSWORD_CACHE = new Map<string, boolean>();
 
 const sha1Hex = (value: string) => {
-  const crypto = require("crypto") as typeof import("crypto");
   return crypto.createHash("sha1").update(value, "utf8").digest("hex");
 };
 
@@ -143,7 +144,7 @@ export const isBreachedPassword = async (password: string) => {
   // This allows tests to mock `global.fetch` and exercise the breached-password logic.
   if (
     process.env.NODE_ENV === "test" &&
-    typeof (globalThis as any).fetch === "undefined"
+    typeof globalThis.fetch === "undefined"
   ) {
     BREACHED_PASSWORD_CACHE.set(normalizedPassword, false);
     return false;
