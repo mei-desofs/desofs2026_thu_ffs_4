@@ -130,6 +130,7 @@ const normalize = (value: string) => value.toLowerCase();
 const BREACHED_PASSWORD_CACHE = new Map<string, boolean>();
 
 const sha1Hex = (value: string) => {
+  // codeql[js/weak-cryptographic-algorithm]
   return crypto.createHash("sha1").update(value, "utf8").digest("hex");
 };
 
