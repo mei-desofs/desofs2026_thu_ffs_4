@@ -1,11 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-
-const SECRET_KEY = process.env.JWT_SECRET;
-
-if (!SECRET_KEY) {
-  throw new Error("JWT_SECRET não definido no .env");
-}
+import { JWT_SECRET } from "../Config/auth";
 
 export const authMiddleware = (
   req: Request,
@@ -20,7 +15,7 @@ export const authMiddleware = (
   }
 
   try {
-    const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
+    const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
 
     // Garantir que id e role existem
     if (!decoded.id || !decoded.role) {
