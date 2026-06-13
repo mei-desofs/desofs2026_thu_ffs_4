@@ -139,6 +139,16 @@ export const isBreachedPassword = async (password: string) => {
     return BREACHED_PASSWORD_CACHE.get(normalizedPassword) as boolean;
   }
 
+  // During unit tests we skip external HIBP checks only when `fetch` is not available
+  // This allows tests to mock `global.fetch` and exercise the breached-password logic.
+  if (
+    process.env.NODE_ENV === "test" &&
+    typeof (globalThis as any).fetch === "undefined"
+  ) {
+    BREACHED_PASSWORD_CACHE.set(normalizedPassword, false);
+    return false;
+  }
+
   const hash = sha1Hex(password).toUpperCase();
   const prefix = hash.slice(0, 5);
   const suffix = hash.slice(5);

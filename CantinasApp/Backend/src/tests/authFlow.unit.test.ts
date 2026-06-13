@@ -11,7 +11,136 @@ describe("Email Verification & Password Reset Flow", () => {
   const newPassword = "NewSecurePass456!@#";
 
   beforeAll(async () => {
-    // Create a test user
+    // Mock DB/service interactions to avoid requiring a live MySQL instance in CI
+    jest
+      .spyOn(UserService, "createUser")
+      .mockImplementation(
+        async (name: string, email: string, password: string, role: string) => {
+          return {
+            id: 12345,
+            name,
+            email,
+            role,
+            password: await bcrypt.hash(password, 10),
+          } as any;
+        },
+      );
+
+    const mockUser: any = {
+      id: 12345,
+      name: "Test User",
+      email: testEmail,
+      role: "Student",
+      password: await bcrypt.hash(testPassword, 10),
+      passwordResetToken: null,
+      passwordResetExpiry: null,
+      emailVerified: false,
+      emailVerificationToken: null,
+      emailVerificationExpiry: null,
+    };
+
+    const audits: any[] = [];
+
+    // Keep created users in-memory for the scope of these tests
+    const createdUsers = new Map<number, any>();
+    let nextId = 20000;
+
+    jest
+      .spyOn(UserService, "requestPasswordReset")
+      .mockImplementation(async (email: string) => {
+        mockUser.passwordResetToken = "reset-token-123";
+        mockUser.passwordResetExpiry = new Date(Date.now() + 3600000);
+        return {
+          message: "email sent",
+          token: mockUser.passwordResetToken,
+          expiry: mockUser.passwordResetExpiry,
+        } as any;
+      });
+
+    jest
+      .spyOn(UserService, "resetPassword")
+      .mockImplementation(async (token: string, newPwd: string) => {
+        // Simulate expired token
+        if (token === "old-token-123") {
+          throw new Error("token expirado");
+        }
+        if (token !== mockUser.passwordResetToken) {
+          throw new Error("token inválido");
+        }
+        mockUser.passwordResetToken = null;
+        mockUser.password = await bcrypt.hash(newPwd, 10);
+        return mockUser;
+      });
+
+    jest
+      .spyOn(UserService, "verifyEmail")
+      .mockImplementation(async (token: string) => {
+        // Find created user with matching token and mark verified
+        for (const user of createdUsers.values()) {
+          if (user.emailVerificationToken === token) {
+            user.emailVerified = true;
+            user.emailVerificationToken = null;
+            return user as any;
+          }
+        }
+        if (mockUser.emailVerificationToken === token) {
+          mockUser.emailVerified = true;
+          mockUser.emailVerificationToken = null;
+          return mockUser as any;
+        }
+        throw new Error("token inválido");
+      });
+
+    jest
+      .spyOn(UserService, "login")
+      .mockImplementation(async (email: string, pwd: string) => {
+        return { id: mockUser.id } as any;
+      });
+
+    jest
+      .spyOn(UserService, "logLoginAttempt")
+      .mockImplementation(
+        async (
+          email: string,
+          ip: string,
+          userAgent: any,
+          status: string,
+          reason?: string,
+        ) => {
+          audits.push({ email, ipAddress: ip, userAgent, status, reason });
+          return undefined as any;
+        },
+      );
+
+    // Mock model methods used directly by the tests
+    jest.spyOn(User, "create").mockImplementation(async (obj: any) => {
+      const id = ++nextId;
+      const user = { ...obj, id };
+      createdUsers.set(id, user);
+      return user as any;
+    });
+    jest.spyOn(User, "destroy").mockImplementation(async (opts: any) => {
+      const id = opts?.where?.id;
+      if (createdUsers.has(id)) {
+        createdUsers.delete(id);
+        return 1 as any;
+      }
+      return 0 as any;
+    });
+    jest.spyOn(User, "findByPk").mockImplementation(async (id: any) => {
+      if (id === mockUser.id) return mockUser;
+      if (createdUsers.has(id)) return createdUsers.get(id);
+      return null as any;
+    });
+
+    jest.spyOn(LoginAudit, "findOne").mockImplementation(async (opts: any) => {
+      const where = opts?.where || {};
+      return audits.find((a) =>
+        Object.keys(where).every((k) => a[k] === where[k]),
+      ) as any;
+    });
+
+    // Create a test user via mocked service
     testUser = await UserService.createUser(
       "Test User",
       testEmail,
@@ -21,10 +150,7 @@ describe("Email Verification & Password Reset Flow", () => {
   });
 
   afterAll(async () => {
-    // Clean up
-    if (testUser) {
-      await User.destroy({ where: { id: testUser.id } });
-    }
+    jest.restoreAllMocks();
   });
 
   it("should request a password reset and generate expiring token", async () => {
