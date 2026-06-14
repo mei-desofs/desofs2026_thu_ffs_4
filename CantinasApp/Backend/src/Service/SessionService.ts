@@ -2,6 +2,14 @@ import jwt from "jsonwebtoken";
 import { Op } from "sequelize";
 import { JWT_SECRET } from "../Config/auth";
 import {
+  ALLOWED_JWT_ALGORITHMS,
+  assertTrustedJwtStructure,
+  JWT_AUDIENCE,
+  JWT_ISSUER,
+  JWT_TOKEN_TYPE,
+  JwtAccessTokenPayload,
+} from "../utils/jwtPolicy";
+import {
   MAX_CONCURRENT_SESSIONS,
   SESSION_INACTIVITY_TIMEOUT_MINUTES,
   SESSION_MAX_LIFETIME_MINUTES,
@@ -10,10 +18,9 @@ import { User } from "../Model/User";
 import { UserSession } from "../Model/UserSession";
 import { generateSecureToken } from "../utils/tokenGenerator";
 
-type SessionTokenPayload = {
-  id: number;
-  role: string;
-  sessionId: string;
+type SessionTokenPayload = JwtAccessTokenPayload & {
+  iss: typeof JWT_ISSUER;
+  aud: typeof JWT_AUDIENCE;
 };
 
 type ActiveSession = {
@@ -66,21 +73,50 @@ export class SessionService {
     });
 
     const token = jwt.sign(
-      { id: user.id, role: user.role, sessionId } satisfies SessionTokenPayload,
+      {
+        id: user.id,
+        role: user.role,
+        sessionId,
+        tokenType: JWT_TOKEN_TYPE,
+      } as SessionTokenPayload,
       JWT_SECRET,
       {
         expiresIn: `${SESSION_MAX_LIFETIME_MINUTES}m`,
         jwtid: sessionId,
-      },
+        algorithm: ALLOWED_JWT_ALGORITHMS[0],
+        issuer: JWT_ISSUER,
+        audience: JWT_AUDIENCE,
+        header: { alg: ALLOWED_JWT_ALGORITHMS[0], typ: "JWT" },
+      } as jwt.SignOptions,
     );
 
     return { token, sessionId, expiresAt };
   }
 
   static async verifySessionToken(token: string) {
-    const decoded = jwt.verify(token, JWT_SECRET) as SessionTokenPayload;
+    return this.verifySessionTokenWithContext(token);
+  }
 
-    if (!decoded.id || !decoded.role || !decoded.sessionId) {
+  static async verifySessionTokenWithContext(
+    token: string,
+    context?: { ipAddress?: string; userAgent?: string },
+  ) {
+    assertTrustedJwtStructure(token);
+
+    const decoded = jwt.verify(token, JWT_SECRET, {
+      algorithms: ALLOWED_JWT_ALGORITHMS as unknown as jwt.Algorithm[],
+      issuer: JWT_ISSUER,
+      audience: JWT_AUDIENCE,
+    }) as SessionTokenPayload;
+
+    if (
+      !decoded.id ||
+      !decoded.role ||
+      !decoded.sessionId ||
+      decoded.tokenType !== JWT_TOKEN_TYPE ||
+      decoded.iss !== JWT_ISSUER ||
+      decoded.aud !== JWT_AUDIENCE
+    ) {
       throw new Error("Token inválido");
     }
 
@@ -97,6 +133,22 @@ export class SessionService {
       throw new Error("Token inválido ou expirado");
     }
 
+    if (
+      process.env.NODE_ENV !== "test" &&
+      ((context?.ipAddress &&
+        session.ipAddress &&
+        context.ipAddress !== session.ipAddress) ||
+        (context?.userAgent &&
+          session.userAgent &&
+          context.userAgent !== session.userAgent))
+    ) {
+      await this.revokeSession(
+        session.sessionId,
+        "Alteração contextual detetada durante a sessão.",
+      );
+      throw new Error("Token inválido ou expirado");
+    }
+
     const user = await User.findByPk(decoded.id);
     if (!user || user.status === "disabled") {
       await this.terminateAllSessionsForUser(decoded.id, "Conta desativada.");
@@ -109,7 +161,7 @@ export class SessionService {
     return {
       user: {
         id: decoded.id,
-        role: decoded.role,
+        role: user.role,
       },
       sessionId: decoded.sessionId,
       session,
