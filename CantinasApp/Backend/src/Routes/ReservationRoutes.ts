@@ -11,13 +11,19 @@ router.post(
   authMiddleware,
   ReservationController.createReservation,
 );
-router.get("/", authMiddleware, ReservationController.listReservations);
+router.get("/", authLimiter, authMiddleware, ReservationController.listReservations);
 router.patch(
   "/:id/cancel",
+  authLimiter,
   authMiddleware,
   ReservationController.cancelReservation,
 );
-router.patch("/:id/status", authMiddleware, ReservationController.updateStatus);
+router.patch(
+  "/:id/status",
+  authLimiter,
+  authMiddleware,
+  ReservationController.updateStatus,
+);
 router.post(
   "/:id/lift",
   authLimiter,
