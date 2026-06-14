@@ -9,6 +9,7 @@ import { generateOrdersFromNeededProducts } from "../utils/generateOrdersFromNee
 import { assertPasswordPolicyAsync } from "../utils/passwordPolicy";
 import { generateSecureToken, getTokenExpiry } from "../utils/tokenGenerator";
 import { NotificationService } from "./NotificationService";
+import { SessionService } from "./SessionService";
 
 export class UserService {
   // Criar novo utilizador
@@ -139,6 +140,10 @@ export class UserService {
     userId: number,
     currentPassword: string,
     newPassword: string,
+    options: {
+      terminateOtherSessions?: boolean;
+      currentSessionId?: string;
+    } = {},
   ) {
     const user = await User.findByPk(userId);
 
@@ -163,6 +168,14 @@ export class UserService {
 
     user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
+
+    if (options.terminateOtherSessions && options.currentSessionId) {
+      await SessionService.terminateOtherSessionsForUser(
+        user.id,
+        options.currentSessionId,
+        "As outras sessões foram terminadas após alteração de password.",
+      );
+    }
 
     await NotificationService.create(
       user.id,
@@ -196,6 +209,11 @@ export class UserService {
     user.status = "quarantine";
     await user.save();
 
+    await SessionService.terminateAllSessionsForUser(
+      user.id,
+      "Conta colocada em quarentena.",
+    );
+
     if (user.role === "Supplier") {
       // se o supplier tiver orders, cancelear e meter neededProducts como needed outra vez
       const orders = await OrderService.getByUserId(id);
@@ -228,6 +246,45 @@ export class UserService {
     user.status = "enabled";
     await user.save();
     return user;
+  }
+
+  static async listActiveSessions(userId: number) {
+    return SessionService.listActiveSessionsForUser(userId);
+  }
+
+  static async logout(sessionId?: string) {
+    return SessionService.terminateCurrentSession(
+      sessionId,
+      "Logout do utilizador.",
+    );
+  }
+
+  static async terminateSession(userId: number, sessionId: string) {
+    return SessionService.terminateSessionForUser(userId, sessionId);
+  }
+
+  static async terminateOtherSessions(
+    userId: number,
+    currentSessionId: string,
+  ) {
+    return SessionService.terminateOtherSessionsForUser(
+      userId,
+      currentSessionId,
+      "Outras sessões terminadas pelo utilizador.",
+    );
+  }
+
+  static async terminateAllSessions(userId: number) {
+    return SessionService.terminateAllSessionsForUser(
+      userId,
+      "Todas as sessões foram terminadas.",
+    );
+  }
+
+  static async terminateAllSessionsGlobally() {
+    await SessionService.terminateAllSessionsGlobally(
+      "Todas as sessões foram terminadas por um administrador.",
+    );
   }
 
   static async logLoginAttempt(
@@ -340,6 +397,11 @@ export class UserService {
     user.passwordResetToken = null;
     user.passwordResetExpiry = null;
     await user.save();
+
+    await SessionService.terminateAllSessionsForUser(
+      user.id,
+      "Password redefinida.",
+    );
 
     await NotificationService.create(
       user.id,

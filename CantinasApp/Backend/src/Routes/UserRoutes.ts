@@ -15,6 +15,31 @@ router.post(
   UserController.requestPasswordReset,
 );
 router.post("/reset-password", authLimiter, UserController.resetPassword);
+router.post("/logout", authLimiter, authMiddleware, UserController.logout);
+router.get(
+  "/sessions",
+  authLimiter,
+  authMiddleware,
+  UserController.listMySessions,
+);
+router.delete(
+  "/sessions",
+  authLimiter,
+  authMiddleware,
+  UserController.terminateAllMySessions,
+);
+router.delete(
+  "/sessions/others",
+  authLimiter,
+  authMiddleware,
+  UserController.terminateOtherMySessions,
+);
+router.delete(
+  "/sessions/:sessionId",
+  authLimiter,
+  authMiddleware,
+  UserController.terminateMySession,
+);
 router.patch(
   "/password",
   authLimiter,
@@ -27,6 +52,20 @@ router.post(
   authMiddleware,
   authorizeRoles("NetworkManager"),
   UserController.adminInitiatePasswordReset,
+);
+router.delete(
+  "/admin/:id/sessions",
+  authLimiter,
+  authMiddleware,
+  authorizeRoles("NetworkManager"),
+  UserController.adminTerminateUserSessions,
+);
+router.delete(
+  "/admin/sessions",
+  authLimiter,
+  authMiddleware,
+  authorizeRoles("NetworkManager"),
+  UserController.adminTerminateAllSessions,
 );
 router.get("/:id", UserController.getById);
 

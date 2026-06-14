@@ -25,6 +25,7 @@ export const registerUserSchema = Joi.object({
 export const changePasswordSchema = Joi.object({
   currentPassword: Joi.string().min(1).required(),
   newPassword: Joi.string().min(8).max(128).required(),
+  terminateOtherSessions: Joi.boolean().default(false),
 });
 
 export const verifyEmailSchema = Joi.object({

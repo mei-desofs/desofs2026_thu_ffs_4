@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { UserService } from "../Service/UserService";
-import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "../Config/auth";
+import { SessionService } from "../Service/SessionService";
 import {
   changePasswordSchema,
   registerUserSchema,
@@ -9,6 +8,18 @@ import {
   requestPasswordResetSchema,
   resetPasswordSchema,
 } from "../Schemas/UserValidation";
+
+type AuthenticatedUser = {
+  id: number;
+  role: string;
+  sessionId?: string;
+};
+
+const getAuthenticatedUser = (req: Request): AuthenticatedUser | undefined =>
+  (req as Request & { user?: AuthenticatedUser }).user;
+
+const getErrorMessage = (error: unknown, fallback: string) =>
+  error instanceof Error ? error.message : fallback;
 
 const getClientIp = (req: Request): string => {
   return (
@@ -103,9 +114,11 @@ export class UserController {
         userAgent as string | undefined,
       );
 
-      const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, {
-        expiresIn: "1d",
-      });
+      const session = await SessionService.createSession(
+        user,
+        ipAddress,
+        userAgent as string | undefined,
+      );
 
       // Log successful login
       await UserService.logLoginAttempt(email, ipAddress, userAgent, "success");
@@ -113,12 +126,15 @@ export class UserController {
       res.json({
         message: "Login bem-sucedido",
         user,
-        token,
+        token: session.token,
+        sessionId: session.sessionId,
+        expiresAt: session.expiresAt,
       });
-    } catch (err: any) {
+    } catch (error: unknown) {
       const { email } = req.body;
       const ipAddress = getClientIp(req);
       const userAgent = req.headers["user-agent"];
+      const errorMessage = getErrorMessage(error, "Credenciais inválidas.");
 
       // Log failed login
       await UserService.logLoginAttempt(
@@ -126,18 +142,16 @@ export class UserController {
         ipAddress,
         userAgent,
         "failed",
-        err.message,
+        errorMessage,
       );
 
-      res
-        .status(400)
-        .json({ message: err.message || "Credenciais inválidas." });
+      res.status(400).json({ message: errorMessage });
     }
   }
 
   static async changePassword(req: Request, res: Response) {
     try {
-      const { currentPassword, newPassword } = req.body;
+      const { currentPassword, newPassword, terminateOtherSessions } = req.body;
       const { error } = changePasswordSchema.validate(req.body, {
         abortEarly: false,
         stripUnknown: true,
@@ -149,20 +163,29 @@ export class UserController {
         });
       }
 
-      const authenticatedUser = (req as any).user;
+      const authenticatedUser = getAuthenticatedUser(req);
+
+      if (!authenticatedUser) {
+        return res.status(401).json({ message: "Não autenticado." });
+      }
+
       const updatedUser = await UserService.changePassword(
         authenticatedUser.id,
         currentPassword,
         newPassword,
+        {
+          terminateOtherSessions,
+          currentSessionId: authenticatedUser.sessionId,
+        },
       );
 
       return res.status(200).json({
         message: "Password atualizada com sucesso.",
         user: updatedUser,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       return res.status(400).json({
-        message: error.message || "Não foi possível alterar a password.",
+        message: getErrorMessage(error, "Não foi possível alterar a password."),
       });
     }
   }
@@ -175,8 +198,10 @@ export class UserController {
         return res.status(404).json({ message: "Utilizador não encontrado." });
       }
       return res.status(200).json(user);
-    } catch (error: any) {
-      return res.status(500).json({ message: error.message });
+    } catch (error: unknown) {
+      return res.status(500).json({
+        message: getErrorMessage(error, "Erro ao obter utilizador."),
+      });
     }
   }
 
@@ -190,8 +215,10 @@ export class UserController {
       return res
         .status(200)
         .json({ message: "Quarentena iniciada com sucesso.", user });
-    } catch (error: any) {
-      return res.status(500).json({ message: error.message });
+    } catch (error: unknown) {
+      return res.status(500).json({
+        message: getErrorMessage(error, "Erro ao iniciar quarentena."),
+      });
     }
   }
 
@@ -205,8 +232,10 @@ export class UserController {
       return res
         .status(200)
         .json({ message: "Quarentena iniciada com sucesso.", user });
-    } catch (error: any) {
-      return res.status(500).json({ message: error.message });
+    } catch (error: unknown) {
+      return res.status(500).json({
+        message: getErrorMessage(error, "Erro ao terminar quarentena."),
+      });
     }
   }
 
@@ -229,9 +258,9 @@ export class UserController {
         message: "Email verificado com sucesso.",
         user,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       return res.status(400).json({
-        message: error.message || "Não foi possível verificar o email.",
+        message: getErrorMessage(error, "Não foi possível verificar o email."),
       });
     }
   }
@@ -252,10 +281,12 @@ export class UserController {
 
       const result = await UserService.requestPasswordReset(email);
       return res.status(200).json(result);
-    } catch (error: any) {
+    } catch (error: unknown) {
       return res.status(500).json({
-        message:
-          error.message || "Não foi possível processar o pedido de reset.",
+        message: getErrorMessage(
+          error,
+          "Não foi possível processar o pedido de reset.",
+        ),
       });
     }
   }
@@ -279,9 +310,9 @@ export class UserController {
         message: "Password alterada com sucesso.",
         user,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       return res.status(400).json({
-        message: error.message || "Não foi possível alterar a password.",
+        message: getErrorMessage(error, "Não foi possível alterar a password."),
       });
     }
   }
@@ -291,10 +322,85 @@ export class UserController {
       const { id } = req.params;
       const result = await UserService.adminInitiatePasswordReset(Number(id));
       return res.status(200).json(result);
-    } catch (error: any) {
+    } catch (error: unknown) {
       return res.status(404).json({
-        message: error.message || "Não foi possível iniciar a reposição.",
+        message: getErrorMessage(
+          error,
+          "Não foi possível iniciar a reposição.",
+        ),
       });
     }
+  }
+
+  static async logout(req: Request, res: Response) {
+    const authenticatedUser = getAuthenticatedUser(req);
+    if (!authenticatedUser) {
+      return res.status(401).json({ message: "Não autenticado." });
+    }
+    await UserService.logout(authenticatedUser?.sessionId);
+    return res.status(200).json({ message: "Logout efetuado com sucesso." });
+  }
+
+  static async listMySessions(req: Request, res: Response) {
+    const authenticatedUser = getAuthenticatedUser(req);
+    if (!authenticatedUser) {
+      return res.status(401).json({ message: "Não autenticado." });
+    }
+    const sessions = await UserService.listActiveSessions(authenticatedUser.id);
+    return res.status(200).json({ sessions });
+  }
+
+  static async terminateMySession(req: Request, res: Response) {
+    const authenticatedUser = getAuthenticatedUser(req);
+    if (!authenticatedUser) {
+      return res.status(401).json({ message: "Não autenticado." });
+    }
+    const sessionId = Array.isArray(req.params.sessionId)
+      ? req.params.sessionId[0]
+      : req.params.sessionId;
+    await UserService.terminateSession(authenticatedUser.id, sessionId);
+    return res.status(200).json({ message: "Sessão terminada com sucesso." });
+  }
+
+  static async terminateOtherMySessions(req: Request, res: Response) {
+    const authenticatedUser = getAuthenticatedUser(req);
+    if (!authenticatedUser) {
+      return res.status(401).json({ message: "Não autenticado." });
+    }
+    await UserService.terminateOtherSessions(
+      authenticatedUser.id,
+      authenticatedUser.sessionId || "",
+    );
+    return res
+      .status(200)
+      .json({ message: "Outras sessões terminadas com sucesso." });
+  }
+
+  static async terminateAllMySessions(req: Request, res: Response) {
+    const authenticatedUser = getAuthenticatedUser(req);
+    if (!authenticatedUser) {
+      return res.status(401).json({ message: "Não autenticado." });
+    }
+    await UserService.terminateAllSessions(authenticatedUser.id);
+    return res
+      .status(200)
+      .json({ message: "Todas as sessões terminadas com sucesso." });
+  }
+
+  static async adminTerminateUserSessions(req: Request, res: Response) {
+    const { id } = req.params;
+    await UserService.terminateAllSessions(Number(id));
+    return res
+      .status(200)
+      .json({ message: "Sessões do utilizador terminadas com sucesso." });
+  }
+
+  static async adminTerminateAllSessions(req: Request, res: Response) {
+    await SessionService.terminateAllSessionsGlobally(
+      "Todas as sessões foram terminadas por um administrador.",
+    );
+    return res
+      .status(200)
+      .json({ message: "Todas as sessões terminadas com sucesso." });
   }
 }

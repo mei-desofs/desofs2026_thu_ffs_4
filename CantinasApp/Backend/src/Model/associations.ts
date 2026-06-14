@@ -1,4 +1,5 @@
 import { User } from "./User";
+import { UserSession } from "./UserSession";
 import { Application } from "./Application";
 import { LoginAudit } from "./LoginAudit";
 import { Product } from "./Product";
@@ -37,6 +38,12 @@ User.hasOne(Application, { foreignKey: "userId", as: "applications" });
 // -------------------------
 LoginAudit.belongsTo(User, { foreignKey: "userId", as: "user" });
 User.hasMany(LoginAudit, { foreignKey: "userId", as: "loginAudits" });
+
+// -------------------------
+// UserSession ↔ User
+// -------------------------
+UserSession.belongsTo(User, { foreignKey: "userId", as: "user" });
+User.hasMany(UserSession, { foreignKey: "userId", as: "sessions" });
 
 // -------------------------
 // FarmerProduct ↔ Application

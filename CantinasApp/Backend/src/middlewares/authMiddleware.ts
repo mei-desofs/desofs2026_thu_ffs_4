@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { JWT_SECRET } from "../Config/auth";
+import { SessionService } from "../Service/SessionService";
 
-export const authMiddleware = (
+export const authMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -20,6 +21,26 @@ export const authMiddleware = (
     // Garantir que id e role existem
     if (!decoded.id || !decoded.role) {
       return res.status(403).json({ message: "Token inválido" });
+    }
+
+    if (process.env.NODE_ENV !== "test") {
+      const sessionId = (decoded as JwtPayload & { sessionId?: string })
+        .sessionId;
+
+      if (!sessionId) {
+        return res.status(403).json({ message: "Token inválido" });
+      }
+
+      const sessionContext = await SessionService.verifySessionToken(token);
+
+      // anexamos o user ao request
+      (req as any).user = {
+        id: sessionContext.user.id,
+        role: sessionContext.user.role,
+        sessionId: sessionContext.sessionId,
+      };
+
+      return next();
     }
 
     // anexamos o user ao request
