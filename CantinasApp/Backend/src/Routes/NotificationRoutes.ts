@@ -16,7 +16,7 @@ router.post(
 );
 
 // "delete" = marcar como vista
-router.put("/:id", authMiddleware, NotificationController.markAsSeen);
+router.put("/:id", apiLimiter, authMiddleware, NotificationController.markAsSeen);
 
 // GET /notifications/user/:userId
 router.get(
