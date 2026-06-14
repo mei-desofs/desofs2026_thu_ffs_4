@@ -129,9 +129,21 @@ const normalize = (value: string) => value.toLowerCase();
 
 const BREACHED_PASSWORD_CACHE = new Map<string, boolean>();
 
-const sha1Hex = (value: string) => {
-  // codeql[js/weak-cryptographic-algorithm]
-  return crypto.createHash("sha1").update(value, "utf8").digest("hex");
+const BREACHED_PASSWORD_KDF_SALT = "cantinasapp-breached-password-check";
+const BREACHED_PASSWORD_KDF_ITERATIONS = 210000;
+const BREACHED_PASSWORD_KDF_KEYLEN = 32;
+const BREACHED_PASSWORD_KDF_DIGEST = "sha256";
+
+const deriveBreachedPasswordHex = (value: string) => {
+  return crypto
+    .pbkdf2Sync(
+      value,
+      BREACHED_PASSWORD_KDF_SALT,
+      BREACHED_PASSWORD_KDF_ITERATIONS,
+      BREACHED_PASSWORD_KDF_KEYLEN,
+      BREACHED_PASSWORD_KDF_DIGEST,
+    )
+    .toString("hex");
 };
 
 export const isBreachedPassword = async (password: string) => {
@@ -151,7 +163,7 @@ export const isBreachedPassword = async (password: string) => {
     return false;
   }
 
-  const hash = sha1Hex(password).toUpperCase();
+  const hash = deriveBreachedPasswordHex(password).toUpperCase();
   const prefix = hash.slice(0, 5);
   const suffix = hash.slice(5);
 
