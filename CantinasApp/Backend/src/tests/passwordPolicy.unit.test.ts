@@ -45,7 +45,8 @@ describe("passwordPolicy", () => {
   it("rejects breached passwords via the async policy check", async () => {
     global.fetch = jest.fn(async () => ({
       ok: true,
-      text: async () => "1E4C9B93F3F0682250B6CF8331B7EE68FD8:42\nABCDE:1",
+      text: async () =>
+        "6275331B4C147D57809B2CF7079F39187382F7E35E743BBA8F1CD149B4E:1",
     })) as any;
 
     await expect(isBreachedPassword("password")).resolves.toBe(true);
