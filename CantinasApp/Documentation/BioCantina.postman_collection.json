@@ -17,7 +17,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"name\": \"CanteenManager\",\r\n  \"email\": \"cm@email.com\",\r\n  \"password\": \"123456\",\r\n  \"role\": \"CanteenManager\"\r\n}\r\n",
+              "raw": "{\r\n  \"name\": \"CanteenManager\",\r\n  \"email\": \"cm@email.com\",\r\n  \"password\": \"V7!qL9@rP4#zN2$k\",\r\n  \"role\": \"CanteenManager\"\r\n}\r\n",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1584,7 +1584,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n  \"email\": \"diogo@email.com\",\r\n  \"password\": \"123456\"\r\n}\r\n",
+          "raw": "{\r\n  \"email\": \"diogo@email.com\",\r\n  \"password\": \"V7!qL9@rP4#zN2$k\"\r\n}\r\n",
           "options": {
             "raw": {
               "language": "json"
