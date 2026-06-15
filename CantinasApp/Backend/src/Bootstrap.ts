@@ -15,6 +15,7 @@ import { MenuType } from "./Model/MenuType";
 import { NutritionType } from "./Model/NutritionType";
 import { ProductType } from "./Model/ProductType";
 import { User } from "./Model/User";
+import { LoginAudit } from "./Model/LoginAudit";
 import { Institution } from "./Model/Institution";
 import { Canteen } from "./Model/Canteen";
 import { Refeitorio } from "./Model/Refeitorio";
@@ -2311,7 +2312,8 @@ export default async function bootstrap() {
   }
   console.log("Product Types seeded");
 
-  const hashedPassword = await bcrypt.hash("123456", 10);
+  const demoPassword = "V7!qL9@rP4#zN2$k";
+  const hashedPassword = await bcrypt.hash(demoPassword, 10);
 
   const usersToInsert = [
     { name: "NetworkManager", email: "net@email.com", role: "NetworkManager" },
@@ -2381,8 +2383,7 @@ export default async function bootstrap() {
     }
   }
 
-  // Adicionar RefectoryStaff com password "12345"
-  const hashedPassword12345 = await bcrypt.hash("12345", 10);
+  // Adicionar RefectoryStaff com password de demonstração forte
   const refectoryStaff2Exists = await User.findOne({
     where: { email: "rstaff2@email.com" },
   });
@@ -2390,15 +2391,14 @@ export default async function bootstrap() {
     await User.create({
       name: "RefectoryStaff2",
       email: "rstaff2@email.com",
-      password: hashedPassword12345,
+      password: hashedPassword,
       status: "enabled",
       role: "RefectoryStaff",
     });
-    console.log("✅ RefectoryStaff2 criado com password 12345");
+    console.log("✅ RefectoryStaff2 criado com password de demonstração forte");
   }
 
-  // Adicionar RefectoryStaff3 com password "123456"
-  const hashedPassword123456 = await bcrypt.hash("123456", 10);
+  // Adicionar RefectoryStaff3 com password de demonstração forte
   const refectoryStaff3Exists = await User.findOne({
     where: { email: "rstaff3@email.com" },
   });
@@ -2406,14 +2406,14 @@ export default async function bootstrap() {
     await User.create({
       name: "RefectoryStaff3",
       email: "rstaff3@email.com",
-      password: hashedPassword123456,
+      password: hashedPassword,
       status: "enabled",
       role: "RefectoryStaff",
     });
-    console.log("✅ RefectoryStaff3 criado com password 123456");
+    console.log("✅ RefectoryStaff3 criado com password de demonstração forte");
   }
 
-  // Adicionar CanteenManager com password "123456" e canteenId 1
+  // Adicionar CanteenManager com password de demonstração forte e canteenId 1
   const canteenManagerExists = await User.findOne({
     where: { email: "cm@email.com" },
   });
@@ -2421,21 +2421,23 @@ export default async function bootstrap() {
     await User.create({
       name: "canteenmanager",
       email: "cm@email.com",
-      password: hashedPassword123456,
+      password: hashedPassword,
       status: "enabled",
       role: "CanteenManager",
       canteenId: 1,
     });
-    console.log("✅ CanteenManager criado com password 123456 e canteenId 1");
+    console.log(
+      "✅ CanteenManager criado com password de demonstração forte e canteenId 1",
+    );
   } else {
     // Se já existe, atualizar para ter canteenId 1
     if (!canteenManagerExists.canteenId) {
       canteenManagerExists.canteenId = 1;
-      canteenManagerExists.password = hashedPassword123456;
+      canteenManagerExists.password = hashedPassword;
       canteenManagerExists.name = "canteenmanager";
       await canteenManagerExists.save();
       console.log(
-        "✅ CanteenManager atualizado com password 123456 e canteenId 1",
+        "✅ CanteenManager atualizado com password de demonstração forte e canteenId 1",
       );
     }
   }
