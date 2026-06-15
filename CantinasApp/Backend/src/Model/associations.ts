@@ -1,5 +1,7 @@
 import { User } from "./User";
+import { UserSession } from "./UserSession";
 import { Application } from "./Application";
+import { LoginAudit } from "./LoginAudit";
 import { Product } from "./Product";
 import { ProductType } from "./ProductType";
 import { FarmerProduct } from "./FarmerProducts";
@@ -32,22 +34,46 @@ Application.belongsTo(User, { foreignKey: "userId", as: "user" });
 User.hasOne(Application, { foreignKey: "userId", as: "applications" });
 
 // -------------------------
+// LoginAudit ↔ User
+// -------------------------
+LoginAudit.belongsTo(User, { foreignKey: "userId", as: "user" });
+User.hasMany(LoginAudit, { foreignKey: "userId", as: "loginAudits" });
+
+// -------------------------
+// UserSession ↔ User
+// -------------------------
+UserSession.belongsTo(User, { foreignKey: "userId", as: "user" });
+User.hasMany(UserSession, { foreignKey: "userId", as: "sessions" });
+
+// -------------------------
 // FarmerProduct ↔ Application
 // -------------------------
-FarmerProduct.belongsTo(Application, { foreignKey: "applicationId", as: "application" });
-Application.hasMany(FarmerProduct, { foreignKey: "applicationId", as: "farmerProducts" });
+FarmerProduct.belongsTo(Application, {
+  foreignKey: "applicationId",
+  as: "application",
+});
+Application.hasMany(FarmerProduct, {
+  foreignKey: "applicationId",
+  as: "farmerProducts",
+});
 
 // -------------------------
 // FarmerProduct ↔ User
 // -------------------------
 FarmerProduct.belongsTo(User, { foreignKey: "userId", as: "user" });
-User.hasMany(FarmerProduct, { foreignKey: "userId", as: "farmerProductsByUser" });
+User.hasMany(FarmerProduct, {
+  foreignKey: "userId",
+  as: "farmerProductsByUser",
+});
 
 // -------------------------
 // FarmerProduct ↔ Product
 // -------------------------
 FarmerProduct.belongsTo(Product, { foreignKey: "productId", as: "product" });
-Product.hasMany(FarmerProduct, { foreignKey: "productId", as: "farmerApplications" });
+Product.hasMany(FarmerProduct, {
+  foreignKey: "productId",
+  as: "farmerApplications",
+});
 
 // -------------------------
 // Reservation ↔ Meal
@@ -88,20 +114,35 @@ User.hasMany(WasteReport, { foreignKey: "reportedBy", as: "wasteReports" });
 // -------------------------
 // WasteReport ↔ Reservation (opcional)
 // -------------------------
-WasteReport.belongsTo(Reservation, { foreignKey: "reservationId", as: "reservation" });
-Reservation.hasMany(WasteReport, { foreignKey: "reservationId", as: "wasteReports" });
+WasteReport.belongsTo(Reservation, {
+  foreignKey: "reservationId",
+  as: "reservation",
+});
+Reservation.hasMany(WasteReport, {
+  foreignKey: "reservationId",
+  as: "wasteReports",
+});
 
 // -------------------------
 // Institution ↔ Canteen
 // -------------------------
-Canteen.belongsTo(Institution, { foreignKey: "institutionId", as: "institution" });
+Canteen.belongsTo(Institution, {
+  foreignKey: "institutionId",
+  as: "institution",
+});
 Institution.hasMany(Canteen, { foreignKey: "institutionId", as: "canteens" });
 
 // -------------------------
 // Institution ↔ Refeitório
 // -------------------------
-Refeitorio.belongsTo(Institution, { foreignKey: "institutionId", as: "institution" });
-Institution.hasMany(Refeitorio, { foreignKey: "institutionId", as: "refeitorios" });
+Refeitorio.belongsTo(Institution, {
+  foreignKey: "institutionId",
+  as: "institution",
+});
+Institution.hasMany(Refeitorio, {
+  foreignKey: "institutionId",
+  as: "refeitorios",
+});
 
 // -------------------------
 // Canteen ↔ Refeitório (Many-to-Many via CanteenRefeitorio)
@@ -134,14 +175,26 @@ Refeitorio.hasMany(Meal, { foreignKey: "refeitorioId", as: "meals" });
 // -------------------------
 // Reservation ↔ Refeitório
 // -------------------------
-Reservation.belongsTo(Refeitorio, { foreignKey: "refeitorioId", as: "refeitorio" });
-Refeitorio.hasMany(Reservation, { foreignKey: "refeitorioId", as: "reservations" });
+Reservation.belongsTo(Refeitorio, {
+  foreignKey: "refeitorioId",
+  as: "refeitorio",
+});
+Refeitorio.hasMany(Reservation, {
+  foreignKey: "refeitorioId",
+  as: "reservations",
+});
 
 // -------------------------
 // WasteReport ↔ Refeitório
 // -------------------------
-WasteReport.belongsTo(Refeitorio, { foreignKey: "refeitorioId", as: "refeitorio" });
-Refeitorio.hasMany(WasteReport, { foreignKey: "refeitorioId", as: "wasteReports" });
+WasteReport.belongsTo(Refeitorio, {
+  foreignKey: "refeitorioId",
+  as: "refeitorio",
+});
+Refeitorio.hasMany(WasteReport, {
+  foreignKey: "refeitorioId",
+  as: "wasteReports",
+});
 
 // -------------------------
 // User ↔ Refeitório (para RefeitorioManager)
@@ -176,20 +229,38 @@ Canteen.hasMany(Menu, { foreignKey: "canteenId", as: "menus" });
 // -------------------------
 // ReservationQuantitiesCanteen ↔ Canteen
 // -------------------------
-ReservationQuantitiesCanteen.belongsTo(Canteen, { foreignKey: "canteenId", as: "canteen" });
-Canteen.hasMany(ReservationQuantitiesCanteen, { foreignKey: "canteenId", as: "reservationQuantities" });
+ReservationQuantitiesCanteen.belongsTo(Canteen, {
+  foreignKey: "canteenId",
+  as: "canteen",
+});
+Canteen.hasMany(ReservationQuantitiesCanteen, {
+  foreignKey: "canteenId",
+  as: "reservationQuantities",
+});
 
 // -------------------------
 // ReservationQuantitiesCanteen ↔ Dish
 // -------------------------
-ReservationQuantitiesCanteen.belongsTo(Dish, { foreignKey: "dishId", as: "dish" });
-Dish.hasMany(ReservationQuantitiesCanteen, { foreignKey: "dishId", as: "reservationQuantities" });
+ReservationQuantitiesCanteen.belongsTo(Dish, {
+  foreignKey: "dishId",
+  as: "dish",
+});
+Dish.hasMany(ReservationQuantitiesCanteen, {
+  foreignKey: "dishId",
+  as: "reservationQuantities",
+});
 
 // -------------------------
 // ReservationQuantitiesCanteen ↔ Refeitório
 // -------------------------
-ReservationQuantitiesCanteen.belongsTo(Refeitorio, { foreignKey: "refeitorioId", as: "refeitorio" });
-Refeitorio.hasMany(ReservationQuantitiesCanteen, { foreignKey: "refeitorioId", as: "reservationQuantities" });
+ReservationQuantitiesCanteen.belongsTo(Refeitorio, {
+  foreignKey: "refeitorioId",
+  as: "refeitorio",
+});
+Refeitorio.hasMany(ReservationQuantitiesCanteen, {
+  foreignKey: "refeitorioId",
+  as: "reservationQuantities",
+});
 
 // -------------------------
 // Ingredient ↔ Product
@@ -214,4 +285,3 @@ Canteen.hasMany(Order, { foreignKey: "canteenId", as: "orders" });
 // -------------------------
 Order.belongsTo(Product, { foreignKey: "productId", as: "product" });
 Product.hasMany(Order, { foreignKey: "productId", as: "orders" });
-

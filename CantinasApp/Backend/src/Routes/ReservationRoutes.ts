@@ -13,5 +13,3 @@ router.patch("/:id/status", apiLimiter, authMiddleware, authorizeRoles("NetworkM
 router.post("/:id/lift", apiLimiter, authLimiter, authMiddleware, authorizeRoles("RefectoryStaff", "RefectoryManager", "NetworkManager"), ReservationController.liftTickets);
 
 export default router;
-
-
