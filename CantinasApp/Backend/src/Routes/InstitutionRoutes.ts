@@ -6,7 +6,7 @@ import { authorizeRoles } from "../middlewares/authorizeRoles";
 
 const router = Router();
 
-router.post("/", authMiddleware, authorizeRoles("NetworkManager"), authLimiter, InstitutionController.createInstitution);
+router.post("/", authLimiter, authMiddleware, authorizeRoles("NetworkManager"), InstitutionController.createInstitution);
 router.get("/", authMiddleware, InstitutionController.getAllInstitutions);
 router.get("/:id", authMiddleware, InstitutionController.getInstitutionById);
 

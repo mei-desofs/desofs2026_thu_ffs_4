@@ -7,6 +7,6 @@ import { authorizeRoles } from "../middlewares/authorizeRoles";
 const router = Router();
 
 // CRUD Products
-router.get("/", authMiddleware, authorizeRoles("Nutritionist", "CanteenManager", "NetworkManager"), apiLimiter, StatisticsController.getBioProductsPercentageForRecipe);
+router.get("/", apiLimiter, authMiddleware, authorizeRoles("Nutritionist", "CanteenManager", "NetworkManager"), StatisticsController.getBioProductsPercentageForRecipe);
 
 export default router;

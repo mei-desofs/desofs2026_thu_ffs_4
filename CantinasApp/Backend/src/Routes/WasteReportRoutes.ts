@@ -6,11 +6,11 @@ import { authorizeRoles } from "../middlewares/authorizeRoles";
 
 const router = Router();
 
-router.post("/", authMiddleware, authorizeRoles("RefectoryStaff", "RefectoryManager", "CanteenManager", "NetworkManager"), authLimiter, WasteReportController.createWasteReport);
-router.get("/meal/:mealId", authMiddleware, authorizeRoles("Nutritionist", "RefectoryManager", "CanteenManager", "NetworkManager"), apiLimiter, WasteReportController.getWasteReportsByMeal);
-router.get("/date", authMiddleware, authorizeRoles("Nutritionist", "RefectoryManager", "CanteenManager", "NetworkManager"), apiLimiter, WasteReportController.getWasteReportsByDate);
-router.get("/consumed-meals", authMiddleware, authorizeRoles("Nutritionist", "RefectoryManager", "CanteenManager", "NetworkManager"), apiLimiter, WasteReportController.getWasteReportsForConsumedMeals);
-router.get("/statistics", authMiddleware, authorizeRoles("Nutritionist", "RefectoryManager", "CanteenManager", "NetworkManager"), apiLimiter, WasteReportController.getWasteReportStatistics);
+router.post("/", authLimiter, authMiddleware, authorizeRoles("RefectoryStaff", "RefectoryManager", "CanteenManager", "NetworkManager"), WasteReportController.createWasteReport);
+router.get("/meal/:mealId", apiLimiter, authMiddleware, authorizeRoles("Nutritionist", "RefectoryManager", "CanteenManager", "NetworkManager"), WasteReportController.getWasteReportsByMeal);
+router.get("/date", apiLimiter, authMiddleware, authorizeRoles("Nutritionist", "RefectoryManager", "CanteenManager", "NetworkManager"), WasteReportController.getWasteReportsByDate);
+router.get("/consumed-meals", apiLimiter, authMiddleware, authorizeRoles("Nutritionist", "RefectoryManager", "CanteenManager", "NetworkManager"), WasteReportController.getWasteReportsForConsumedMeals);
+router.get("/statistics", apiLimiter, authMiddleware, authorizeRoles("Nutritionist", "RefectoryManager", "CanteenManager", "NetworkManager"), WasteReportController.getWasteReportStatistics);
 
 export default router;
 

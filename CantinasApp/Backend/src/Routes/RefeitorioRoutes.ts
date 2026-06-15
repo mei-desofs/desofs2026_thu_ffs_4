@@ -6,7 +6,7 @@ import { authorizeRoles } from "../middlewares/authorizeRoles";
 
 const router = Router();
 
-router.post("/", authMiddleware, authorizeRoles("NetworkManager"), authLimiter, RefeitorioController.createRefeitorio);
+router.post("/", authLimiter, authMiddleware, authorizeRoles("NetworkManager"), RefeitorioController.createRefeitorio);
 router.get("/", authMiddleware, RefeitorioController.getAllRefeitorios);
 router.get("/:id", authMiddleware, RefeitorioController.getRefeitorioById);
 

@@ -6,7 +6,7 @@ import { authorizeRoles } from "../middlewares/authorizeRoles";
 
 const router = Router();
 
-router.get("/waste", authMiddleware, authorizeRoles("Nutritionist", "RefectoryManager", "CanteenManager", "NetworkManager"), apiLimiter, PerformanceController.getWastePercentage);
+router.get("/waste", apiLimiter, authMiddleware, authorizeRoles("Nutritionist", "RefectoryManager", "CanteenManager", "NetworkManager"), PerformanceController.getWastePercentage);
 
 export default router;
 

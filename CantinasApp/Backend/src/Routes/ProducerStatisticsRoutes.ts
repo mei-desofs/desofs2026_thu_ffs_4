@@ -6,7 +6,7 @@ import { authorizeRoles } from "../middlewares/authorizeRoles";
 
 const router = Router();
 
-router.get("/", authMiddleware, authorizeRoles("NetworkManager"), apiLimiter, ProducerStatisticsController.getProducerStatistics);
+router.get("/", apiLimiter, authMiddleware, authorizeRoles("NetworkManager"), ProducerStatisticsController.getProducerStatistics);
 
 export default router;
 

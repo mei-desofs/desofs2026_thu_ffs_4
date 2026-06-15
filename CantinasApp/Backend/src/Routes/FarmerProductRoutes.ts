@@ -7,10 +7,10 @@ import { authorizeRoles } from "../middlewares/authorizeRoles";
 const router = Router();
 
 // Criar produtos do agricultor para uma aplicação
-router.post("/", authMiddleware, authorizeRoles("Supplier", "NetworkManager"), authLimiter, FarmerProductController.create);
+router.post("/", authLimiter, authMiddleware, authorizeRoles("Supplier", "NetworkManager"), FarmerProductController.create);
 
 // Listar todos
-router.get("/", authMiddleware, authorizeRoles("NetworkManager"), apiLimiter, FarmerProductController.list);
+router.get("/", apiLimiter, authMiddleware, authorizeRoles("NetworkManager"), FarmerProductController.list);
 
 // Listar por applicationId
 router.get("/application/:applicationId", authMiddleware, authorizeRoles("NetworkManager"), FarmerProductController.getByApplication);

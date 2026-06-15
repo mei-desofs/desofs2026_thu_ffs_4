@@ -7,7 +7,7 @@ import { authorizeRoles } from "../middlewares/authorizeRoles";
 const router = Router();
 
 // CRUD Products
-router.post("/", authMiddleware, authorizeRoles("Nutritionist", "NetworkManager"), authLimiter, RecipeController.createRecipe);
+router.post("/", authLimiter, authMiddleware, authorizeRoles("Nutritionist", "NetworkManager"), RecipeController.createRecipe);
 router.get("/", authMiddleware, RecipeController.listRecipes);
 router.get("/:id", authMiddleware, RecipeController.getRecipe);
 

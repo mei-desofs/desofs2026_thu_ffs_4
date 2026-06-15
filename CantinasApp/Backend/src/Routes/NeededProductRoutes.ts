@@ -6,7 +6,7 @@ import { authorizeRoles } from "../middlewares/authorizeRoles";
 
 const router = Router();
 
-router.post("/", authMiddleware, authorizeRoles("StockManager", "CanteenManager", "NetworkManager"), authLimiter, NeededProductController.create);
+router.post("/", authLimiter, authMiddleware, authorizeRoles("StockManager", "CanteenManager", "NetworkManager"), NeededProductController.create);
 router.put("/:id", authMiddleware, authorizeRoles("StockManager", "CanteenManager", "NetworkManager"), NeededProductController.update);
 router.delete("/:id", authMiddleware, authorizeRoles("StockManager", "CanteenManager", "NetworkManager"), NeededProductController.delete);
 

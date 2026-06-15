@@ -7,7 +7,7 @@ import { verifySelfOrRole } from "../middlewares/ownershipMiddleware";
 
 const router = Router();
 
-router.post("/", authMiddleware, authorizeRoles("StockManager", "NetworkManager"), authLimiter, OrderController.create);
+router.post("/", authLimiter, authMiddleware, authorizeRoles("StockManager", "NetworkManager"), OrderController.create);
 router.put("/:id", authMiddleware, authorizeRoles("StockManager", "NetworkManager"), OrderController.update);
 router.patch("/:id/status", authMiddleware, authorizeRoles("Supplier", "NetworkManager"), OrderController.updateStatus);
 router.delete("/:id", authMiddleware, authorizeRoles("StockManager", "NetworkManager"), OrderController.delete);

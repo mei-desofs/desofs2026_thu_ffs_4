@@ -7,7 +7,7 @@ import { authorizeRoles } from "../middlewares/authorizeRoles";
 const router = Router();
 
 // CRUD Products
-router.post("/", authMiddleware, authorizeRoles("Supplier", "NetworkManager"), authLimiter, ProductController.createProduct);
+router.post("/", authLimiter, authMiddleware, authorizeRoles("Supplier", "NetworkManager"), ProductController.createProduct);
 router.get("/", authMiddleware, ProductController.listProducts);
 router.get("/:id", authMiddleware, ProductController.getProduct);
 

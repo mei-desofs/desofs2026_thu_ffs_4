@@ -7,9 +7,9 @@ import { authorizeRoles } from "../middlewares/authorizeRoles";
 const router = Router();
 
 // CRUD Products
-router.post("/", authMiddleware, authorizeRoles("Nutritionist", "CanteenManager", "NetworkManager"), authLimiter, MealController.createMeal);
+router.post("/", authLimiter, authMiddleware, authorizeRoles("Nutritionist", "CanteenManager", "NetworkManager"), MealController.createMeal);
 router.get("/", authMiddleware, MealController.listMeals);
-router.get("/canteen/:canteenId/statistics", authMiddleware, authorizeRoles("Nutritionist", "CanteenManager", "NetworkManager"), apiLimiter, MealController.getCanteenStatistics);
+router.get("/canteen/:canteenId/statistics", apiLimiter, authMiddleware, authorizeRoles("Nutritionist", "CanteenManager", "NetworkManager"), MealController.getCanteenStatistics);
 router.get("/:id", authMiddleware, MealController.getMeal);
 
 export default router;

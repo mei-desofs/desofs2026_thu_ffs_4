@@ -8,12 +8,12 @@ import { verifySelfOrRole } from "../middlewares/ownershipMiddleware";
 const router = Router();
 
 // criar notificação
-router.post("/", authMiddleware, authorizeRoles("Supplier", "CanteenManager", "NetworkManager"), authLimiter, NotificationController.create);
+router.post("/", authLimiter, authMiddleware, authorizeRoles("Supplier", "CanteenManager", "NetworkManager"), NotificationController.create);
 
 // "delete" = marcar como vista
 router.put("/:id", authMiddleware, authorizeRoles("Supplier", "CanteenManager", "NetworkManager"), NotificationController.markAsSeen);
 
 // GET /notifications/user/:userId
-router.get("/user/:userId", authMiddleware, verifySelfOrRole(), apiLimiter, NotificationController.getByUserId);
+router.get("/user/:userId", apiLimiter, authMiddleware, verifySelfOrRole(), NotificationController.getByUserId);
 
 export default router;
