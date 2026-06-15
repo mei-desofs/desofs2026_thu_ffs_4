@@ -1,13 +1,16 @@
 import { Router } from "express";
 import { OrderController } from "../Controller/OrderController";
 import { authLimiter } from "../middlewares/rateLimit";
+import { authMiddleware } from "../middlewares/authMiddleware";
+import { authorizeRoles } from "../middlewares/authorizeRoles";
+import { verifySelfOrRole } from "../middlewares/ownershipMiddleware";
 
 const router = Router();
 
-router.post("/", authLimiter, OrderController.create);
-router.put("/:id", OrderController.update);
-router.patch("/:id/status", OrderController.updateStatus);
-router.delete("/:id", OrderController.delete);
-router.get("/:userid", OrderController.getByUserId);
-router.get("/", OrderController.getAll);
+router.post("/", authMiddleware, authorizeRoles("StockManager", "NetworkManager"), authLimiter, OrderController.create);
+router.put("/:id", authMiddleware, authorizeRoles("StockManager", "NetworkManager"), OrderController.update);
+router.patch("/:id/status", authMiddleware, authorizeRoles("Supplier", "NetworkManager"), OrderController.updateStatus);
+router.delete("/:id", authMiddleware, authorizeRoles("StockManager", "NetworkManager"), OrderController.delete);
+router.get("/:userid", authMiddleware, verifySelfOrRole("StockManager", "NetworkManager"), OrderController.getByUserId);
+router.get("/", authMiddleware, authorizeRoles("StockManager", "NetworkManager"), OrderController.getAll);
 export default router;
