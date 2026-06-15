@@ -11,7 +11,7 @@ const router = Router();
 router.post("/", authLimiter, authMiddleware, authorizeRoles("Supplier", "CanteenManager", "NetworkManager"), NotificationController.create);
 
 // "delete" = marcar como vista
-router.put("/:id", authMiddleware, authorizeRoles("Supplier", "CanteenManager", "NetworkManager"), NotificationController.markAsSeen);
+router.put("/:id", apiLimiter, authMiddleware, authorizeRoles("Supplier", "CanteenManager", "NetworkManager"), NotificationController.markAsSeen);
 
 // GET /notifications/user/:userId
 router.get("/user/:userId", apiLimiter, authMiddleware, verifySelfOrRole(), NotificationController.getByUserId);

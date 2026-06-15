@@ -13,6 +13,6 @@ router.post("/", authLimiter, authMiddleware, authorizeRoles("Supplier", "Networ
 router.get("/", apiLimiter, authMiddleware, authorizeRoles("NetworkManager"), FarmerProductController.list);
 
 // Listar por applicationId
-router.get("/application/:applicationId", authMiddleware, authorizeRoles("NetworkManager"), FarmerProductController.getByApplication);
+router.get("/application/:applicationId", apiLimiter, authMiddleware, authorizeRoles("NetworkManager"), FarmerProductController.getByApplication);
 
 export default router;

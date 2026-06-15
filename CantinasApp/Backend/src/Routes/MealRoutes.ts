@@ -8,8 +8,8 @@ const router = Router();
 
 // CRUD Products
 router.post("/", authLimiter, authMiddleware, authorizeRoles("Nutritionist", "CanteenManager", "NetworkManager"), MealController.createMeal);
-router.get("/", authMiddleware, MealController.listMeals);
+router.get("/", apiLimiter, authMiddleware, MealController.listMeals);
 router.get("/canteen/:canteenId/statistics", apiLimiter, authMiddleware, authorizeRoles("Nutritionist", "CanteenManager", "NetworkManager"), MealController.getCanteenStatistics);
-router.get("/:id", authMiddleware, MealController.getMeal);
+router.get("/:id", apiLimiter, authMiddleware, MealController.getMeal);
 
 export default router;
