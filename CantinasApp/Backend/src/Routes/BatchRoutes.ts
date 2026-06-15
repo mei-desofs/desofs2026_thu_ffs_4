@@ -1,12 +1,14 @@
 import { Router } from "express";
 import { BatchController } from "../Controller/BatchController";
-import { authLimiter } from "../middlewares/rateLimit";
+import { authLimiter, apiLimiter } from "../middlewares/rateLimit";
+import { authMiddleware } from "../middlewares/authMiddleware";
+import { authorizeRoles } from "../middlewares/authorizeRoles";
 
 const router = Router();
 
 // CRUD Products
-router.post("/", authLimiter, BatchController.createBatch);
-router.get("/", BatchController.listBatches);
-router.get("/:id", BatchController.getBatch);
+router.post("/", authLimiter, authMiddleware, authorizeRoles("StockManager", "NetworkManager"), BatchController.createBatch);
+router.get("/", apiLimiter, authMiddleware, authorizeRoles("StockManager", "NetworkManager"), BatchController.listBatches);
+router.get("/:id", apiLimiter, authMiddleware, authorizeRoles("StockManager", "NetworkManager"), BatchController.getBatch);
 
 export default router;

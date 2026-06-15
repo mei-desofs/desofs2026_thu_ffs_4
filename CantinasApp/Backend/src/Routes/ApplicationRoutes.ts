@@ -5,6 +5,7 @@ import path from "path";
 import { authLimiter, apiLimiter } from "../middlewares/rateLimit";
 import { authMiddleware } from "../middlewares/authMiddleware";
 import { authorizeRoles } from "../middlewares/authorizeRoles";
+import { verifySelfOrRole } from "../middlewares/ownershipMiddleware";
 
 // Configuração do multer para PDFs com nomes únicos
 const storage = multer.diskStorage({
@@ -30,64 +31,24 @@ const upload = multer({
 const router = Router();
 
 // Criar nova aplicação com FarmerProducts e documentos PDF
-router.post(
-  "/",
-  authLimiter,
-  authMiddleware,
-  upload.array("documents"),
-  ApplicationController.createApplicationWithFiles,
-);
+router.post("/", authLimiter, authMiddleware, authorizeRoles("Supplier", "NetworkManager"), upload.array("documents"), ApplicationController.createApplicationWithFiles);
 
 // Atualizar uma aplicação com FarmerProducts e documentos PDF
-router.put(
-  "/:applicationId",
-  authLimiter,
-  authMiddleware,
-  upload.array("documents"),
-  ApplicationController.updateApplicationWithFiles,
-);
+router.put("/:applicationId", authLimiter, authMiddleware, authorizeRoles("Supplier", "NetworkManager"), upload.array("documents"), ApplicationController.updateApplicationWithFiles);
 
 // Listar todas as aplicações
-router.get(
-  "/",
-  apiLimiter,
-  authMiddleware,
-  authorizeRoles("NetworkManager"),
-  ApplicationController.listApplications,
-);
+router.get("/", apiLimiter, authMiddleware, authorizeRoles("NetworkManager"), ApplicationController.listApplications);
 
 // Get document of one application
-router.get(
-  "/:applicationId/documents/:filename",
-  apiLimiter,
-  authMiddleware,
-  ApplicationController.getDocument,
-);
+router.get('/:applicationId/documents/:filename', apiLimiter, authMiddleware, authorizeRoles("NetworkManager"), ApplicationController.getDocument);
 
 // Obter aplicação por userId
-router.get(
-  "/user/:userId",
-  apiLimiter,
-  authMiddleware,
-  ApplicationController.getApplicationByUser,
-);
+router.get("/user/:userId", apiLimiter, authMiddleware, verifySelfOrRole("NetworkManager"), ApplicationController.getApplicationByUser);
 
 // Aceitar uma aplicação
-router.post(
-  "/:applicationId/accept",
-  authLimiter,
-  authMiddleware,
-  authorizeRoles("NetworkManager"),
-  ApplicationController.acceptApplication,
-);
+router.post("/:applicationId/accept", authLimiter, authMiddleware, authorizeRoles("NetworkManager"), ApplicationController.acceptApplication);
 
 // Rejeitar uma aplicação
-router.post(
-  "/:applicationId/reject",
-  authLimiter,
-  authMiddleware,
-  authorizeRoles("NetworkManager"),
-  ApplicationController.rejectApplication,
-);
+router.post("/:applicationId/reject", authLimiter, authMiddleware, authorizeRoles("NetworkManager"), ApplicationController.rejectApplication);
 
 export default router;
