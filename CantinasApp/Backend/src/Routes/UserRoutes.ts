@@ -4,24 +4,27 @@ import { authLimiter, apiLimiter } from "../middlewares/rateLimit";
 import { authMiddleware } from "../middlewares/authMiddleware";
 import { authorizeRoles } from "../middlewares/authorizeRoles";
 import { verifySelfOrRole } from "../middlewares/ownershipMiddleware";
+import { setAntiCachingHeaders } from "../middlewares/noCache";
 
 const router = Router();
 
 router.post("/register", authLimiter, UserController.register);
-router.post("/login", authLimiter, UserController.login);
+router.post("/login", authLimiter, setAntiCachingHeaders,  UserController.login);
 router.get("/:id", apiLimiter, authMiddleware, verifySelfOrRole("NetworkManager"), UserController.getById);
 router.post("/verify-email", authLimiter, UserController.verifyEmail);
 router.post(
   "/forgot-password",
   authLimiter,
+  setAntiCachingHeaders,
   UserController.requestPasswordReset,
 );
-router.post("/reset-password", authLimiter, UserController.resetPassword);
-router.post("/logout", authLimiter, authMiddleware, UserController.logout);
+router.post("/reset-password", authLimiter, setAntiCachingHeaders, UserController.resetPassword);
+router.post("/logout", authLimiter, authMiddleware, setAntiCachingHeaders, UserController.logout);
 router.get(
   "/sessions",
   authLimiter,
   authMiddleware,
+  setAntiCachingHeaders,
   UserController.listMySessions,
 );
 router.delete(

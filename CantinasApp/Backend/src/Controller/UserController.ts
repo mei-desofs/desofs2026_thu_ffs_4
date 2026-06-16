@@ -101,7 +101,7 @@ export class UserController {
       const { email, password } = req.body;
       const ipAddress = getClientIp(req);
       const userAgent = req.headers["user-agent"];
-
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
       const user = await UserService.login(
         email,
         password,
@@ -151,6 +151,7 @@ export class UserController {
         abortEarly: false,
         stripUnknown: true,
       });
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
 
       if (error) {
         return res.status(400).json({
@@ -268,6 +269,8 @@ export class UserController {
         stripUnknown: true,
       });
 
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+
       if (error) {
         return res.status(400).json({
           message: error.details.map((detail) => detail.message).join(" "),
@@ -294,6 +297,8 @@ export class UserController {
         stripUnknown: true,
       });
 
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      
       if (error) {
         return res.status(400).json({
           message: error.details.map((detail) => detail.message).join(" "),
@@ -333,6 +338,7 @@ export class UserController {
       return res.status(401).json({ message: "Não autenticado." });
     }
     await UserService.logout(authenticatedUser?.sessionId);
+    res.set("Clear-Site-Data", '"cache", "cookies", "storage"');
     return res.status(200).json({ message: "Logout efetuado com sucesso." });
   }
 
