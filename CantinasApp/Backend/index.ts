@@ -33,6 +33,12 @@ import "./src/Model/associations";
 import { startMarkUnconsumedReservationsJob } from "./src/Jobs/markUnconsumedReservations";
 import { startWeeklyMenuPlanningJob } from "./src/Jobs/weeklyMenuPlanning";
 import path from "path";
+import { Menu } from "./src/Model/Menu";
+import { Order } from "./src/Model/Order";
+import { NeededProduct } from "./src/Model/NeededProduct";
+import { Notification } from "./src/Model/Notification";
+import { AverageReservation } from "./src/Model/AverageReservation";  
+import requestLogger from "./src/middlewares/requestLogger";
 import { allowedMethodsMiddleware } from "./src/middlewares/allowedMethods";
 import { headerSanitizer } from "./src/middlewares/headerSanitizer";
 import { urlLengthLimit } from "./src/middlewares/urlLength";
@@ -76,6 +82,7 @@ app.use(cors({
   credentials: true,
 }));
 
+app.use(requestLogger);
 app.use(express.json({
   limit: "1mb",
   type: "application/json"

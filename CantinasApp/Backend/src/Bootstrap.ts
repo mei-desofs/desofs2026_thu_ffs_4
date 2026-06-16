@@ -15,12 +15,16 @@ import { MenuType } from "./Model/MenuType";
 import { NutritionType } from "./Model/NutritionType";
 import { ProductType } from "./Model/ProductType";
 import { User } from "./Model/User";
-import { LoginAudit } from "./Model/LoginAudit";
 import { Institution } from "./Model/Institution";
 import { Canteen } from "./Model/Canteen";
 import { Refeitorio } from "./Model/Refeitorio";
 import { CanteenRefeitorio } from "./Model/CanteenRefeitorio";
 import bcrypt from "bcrypt";
+import logger from "./utils/logger";
+
+// Route remaining console calls in this bootstrap module to the structured logger
+(console as any).log = (...args: any[]) => logger.info({ event: "bootstrap_log", message: args.map((a) => (typeof a === "string" ? a : JSON.stringify(a))).join(" ") });
+(console as any).error = (...args: any[]) => logger.error({ event: "bootstrap_error", message: args.map((a) => (typeof a === "string" ? a : JSON.stringify(a))).join(" ") });
 
 export default async function bootstrap() {
   // Definir mealsToInsert no início para estar acessível em todo o bootstrap
@@ -139,7 +143,7 @@ export default async function bootstrap() {
         await ProductType.create(productType);
       }
     }
-    console.log("✅ Product Types seeded");
+    logger.info("✅ Product Types seeded");
 
     // --- PRODUCTS ---
     const productsToInsert = [
@@ -445,7 +449,7 @@ export default async function bootstrap() {
       }
     }
 
-    console.log("Products seeded");
+    logger.info("Products seeded");
 
     //make this until dishId 60
     const average_reservationsToInsert: {
@@ -708,7 +712,7 @@ export default async function bootstrap() {
         await AverageReservation.create(avgRes);
       }
     }
-    console.log("Average Reservations seeded");
+    logger.info("Average Reservations seeded");
 
     const informationToInsert = [
       { avgClientsLunch: 350, avgClientsDinner: 100 },
@@ -829,7 +833,7 @@ export default async function bootstrap() {
       }
     }
 
-    console.log("Ingredients seeded");
+    logger.info("Ingredients seeded");
 
     const recipesToInsert = [
       // --- PRATOS DE CARNE ---
@@ -926,7 +930,7 @@ export default async function bootstrap() {
       }
     }
 
-    console.log("Recipes seeded");
+    logger.info("Recipes seeded");
 
     const dishesToInsert = [
       // PRATOS DE CARNE
@@ -1040,7 +1044,7 @@ export default async function bootstrap() {
       }
     }
 
-    console.log("Dishes seeded");
+    logger.info("Dishes seeded");
 
     // mealsToInsert já está definido no início da função
     // As meals serão criadas depois das instituições/cantinas/refeitórios
@@ -1294,7 +1298,7 @@ export default async function bootstrap() {
       }
     }
 
-    console.log("Batches seeded");
+    logger.info("Batches seeded");
 
     const stocksToInsert = [
       {
@@ -1313,7 +1317,7 @@ export default async function bootstrap() {
       await Stock.create(stock);
     }
 
-    console.log("Stocks seeded");
+    logger.info("Stocks seeded");
 
     const additionalProductsToInsert = [
       // Produtos bio adicionais
@@ -1617,7 +1621,7 @@ export default async function bootstrap() {
         await Product.create(product);
       }
     }
-    console.log("Additional products seeded");
+    logger.info("Additional products seeded");
 
     const additionalIngredientsToInsert = [
       // Ingredientes para pratos de carne adicionais
@@ -1662,7 +1666,7 @@ export default async function bootstrap() {
         await Ingredient.create(ingredient);
       }
     }
-    console.log("Additional ingredients seeded");
+    logger.info("Additional ingredients seeded");
 
     const additionalRecipesToInsert = [
       // PRATOS DE CARNE ADICIONAIS (16-25) -> IDs 47-61
@@ -1900,7 +1904,7 @@ export default async function bootstrap() {
         await Recipe.create(recipe);
       }
     }
-    console.log("Additional recipes seeded");
+    logger.info("Additional recipes seeded");
 
     // Vou corrigir baseando-me nas receitas que me deu
     const aditionalDishes = [
@@ -2220,7 +2224,7 @@ export default async function bootstrap() {
       await Unit.create({ ...unit, name: unit.name as UnitEnum });
     }
   }
-  console.log("Units seeded");
+  logger.info("Units seeded");
 
   const allergensToInsert = [
     { name: "Lactose" },
@@ -2240,7 +2244,7 @@ export default async function bootstrap() {
       await Allergen.create(allergen);
     }
   }
-  console.log("Allergens seeded");
+  logger.info("Allergens seeded");
 
   const dishTypesToInsert = [
     { name: "Meat" },
@@ -2254,7 +2258,7 @@ export default async function bootstrap() {
       await DishType.create(type);
     }
   }
-  console.log("Dish Types seeded");
+  logger.info("Dish Types seeded");
 
   const mealTypesToInsert = [{ name: "Lunch" }, { name: "Dinner" }];
 
@@ -2264,7 +2268,7 @@ export default async function bootstrap() {
       await MealType.create(mealType);
     }
   }
-  console.log("Meal Types seeded");
+  logger.info("Meal Types seeded");
 
   const menuTypesToInsert = [{ name: "Menu 5 dias" }, { name: "Menu 7 dias" }];
 
@@ -2274,7 +2278,7 @@ export default async function bootstrap() {
       await MenuType.create(menuType);
     }
   }
-  console.log("Menu Types seeded");
+  logger.info("Menu Types seeded");
 
   const nutritionTypesToInsert = [
     { name: "Proteína" },
@@ -2291,7 +2295,7 @@ export default async function bootstrap() {
       await NutritionType.create(nutrition);
     }
   }
-  console.log("Nutrition Types seeded");
+  logger.info("Nutrition Types seeded");
 
   const productTypesToInsert = [
     { name: "Fruta" },
@@ -2310,7 +2314,7 @@ export default async function bootstrap() {
       await ProductType.create(productType);
     }
   }
-  console.log("Product Types seeded");
+  logger.info("Product Types seeded");
 
   const demoPassword = "V7!qL9@rP4#zN2$k";
   const hashedPassword = await bcrypt.hash(demoPassword, 10);

@@ -4,7 +4,9 @@ declare module "express-serve-static-core" {
       id: number;
       role: string;
     };
+    requestId?: string;
+    }
   }
-}
+
 
 export {};

@@ -39,7 +39,8 @@
     "recharts": "^3.5.1",
     "sequelize": "^6.37.7",
     "socket.io": "^4.8.1",
-    "uuid": "^13.0.0"
+    "uuid": "^13.0.0",
+    "winston": "^3.19.0"
   },
   "devDependencies": {
     "@types/axios": "^0.9.36",
@@ -58,6 +59,7 @@
     "@types/sequelize": "^4.28.20",
     "@types/supertest": "^7.2.0",
     "@types/uuid": "^10.0.0",
+    "@types/winston": "^2.4.4",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
     "eslint": "^8.57.1",
