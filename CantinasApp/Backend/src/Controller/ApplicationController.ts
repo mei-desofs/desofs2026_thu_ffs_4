@@ -257,14 +257,14 @@ export class ApplicationController {
       } = req.body;
 
       const files = (req.files as Express.Multer.File[]) || [];
-      
+
       const fileMaxSize = 5; //In MB
       const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf', 'text/plain'];
 
       if (files.length > 10) return res.status(500).json({ error: "Cannot upload more than 10 files." });
       if (files.some((f) => f.size > fileMaxSize * 1024 * 1024)) return res.status(500).json({ error: "Cannot upload file with more than " + fileMaxSize + " MB." });
       if (files.some((f) => allowedMimeTypes.includes(f.mimetype))) return res.status(500).json({ error: "Used only approved file extensions." });
-      
+
       // Criar aplicação **primeiro** sem ficheiros
       const app = await service.createApplication({
         userId: authenticatedUser.id,
@@ -283,14 +283,18 @@ export class ApplicationController {
         return res.status(500).json({ error: "Failed to create application" });
       const applicationId = app.id;
 
-      // Renomear ficheiros com userId-applicationId-nomeOriginal
+      const uploadsDir = path.resolve("uploads");
       const documents = files.map((f) => {
         const newFilename = `${authenticatedUser.id}-${applicationId}-${safeFilename(f.originalname)}`;
-        const newPath = path.join("uploads", newFilename);
+        const resolvedPath = path.resolve(uploadsDir, newFilename);
 
-        fs.renameSync(f.path, newPath); // mover/renomear ficheiro
+        if (!resolvedPath.startsWith(uploadsDir + path.sep)) {
+          throw new Error("INVALID_FILE_PATH");
+        }
 
-        return { filename: f.originalname, path: newPath };
+        fs.renameSync(f.path, resolvedPath);
+
+        return { filename: f.originalname, path: path.join("uploads", newFilename) };
       });
 
       // Atualizar aplicação com documentos
@@ -335,11 +339,17 @@ export class ApplicationController {
       }
 
       const files = (req.files as Express.Multer.File[]) || [];
+      const uploadsDir2 = path.resolve("uploads");
       const newDocuments = files.map((f) => {
-        const newFilename = `${existingApp.userId}-${applicationId}-${f.originalname}`;
-        const newPath = path.join("uploads", newFilename);
-        fs.renameSync(f.path, newPath);
-        return { filename: f.originalname, path: newPath };
+        const newFilename = `${existingApp.userId}-${applicationId}-${safeFilename(f.originalname)}`;
+        const resolvedPath2 = path.resolve(uploadsDir2, newFilename);
+
+        if (!resolvedPath2.startsWith(uploadsDir2 + path.sep)) {
+          throw new Error("INVALID_FILE_PATH");
+        }
+
+        fs.renameSync(f.path, resolvedPath2);
+        return { filename: f.originalname, path: path.join("uploads", newFilename) };
       });
 
       const documentsSubmitted = existingApp.documentsSubmitted

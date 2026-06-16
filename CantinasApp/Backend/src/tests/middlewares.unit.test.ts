@@ -1,8 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-process.env.JWT_SECRET = "test-secret";
-
 let authMiddleware: typeof import("../middlewares/authMiddleware").authMiddleware;
 let authorizeRoles: typeof import("../middlewares/authorizeRoles").authorizeRoles;
 

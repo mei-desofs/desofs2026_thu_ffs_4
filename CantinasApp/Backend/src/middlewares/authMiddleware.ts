@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { JWT_SECRET } from "../Config/auth";
+import logger from "../utils/logger";
 
 export const authMiddleware = async (
   req: Request,
@@ -8,9 +9,10 @@ export const authMiddleware = async (
   next: NextFunction,
 ) => {
   const authHeader = req.headers["authorization"];
-  const token = authHeader?.split(" ")[1]; // "Bearer <token>"
+  const token = authHeader?.split(" ")[1];
 
   if (!token) {
+    logger.warn({ event: "auth_no_token", path: req.path, method: req.method });
     return res.status(401).json({ message: "Token não fornecido" });
   }
 
@@ -22,8 +24,8 @@ export const authMiddleware = async (
       undefined;
     const userAgent = req.headers["user-agent"] as string | undefined;
 
-    // Garantir que id e role existem
     if (!decoded.id || !decoded.role) {
+      logger.warn({ event: "auth_invalid_payload", path: req.path });
       return res.status(403).json({ message: "Token inválido" });
     }
 
@@ -62,6 +64,7 @@ export const authMiddleware = async (
 
     next();
   } catch (err) {
+    logger.warn({ event: "auth_token_rejected", path: req.path });
     return res.status(403).json({ message: "Token inválido ou expirado" });
   }
 };

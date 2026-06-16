@@ -475,6 +475,7 @@ jobs:
             -e DB_PASS=cantinas \
             -e DB_HOST=127.0.0.1 \
             -e DB_PORT=3306 \
+            -e JWT_SECRET=1234 \
             cantinas-backend
 
           echo "Waiting for application startup..."
