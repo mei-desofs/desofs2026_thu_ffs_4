@@ -15,7 +15,6 @@ import { MenuType } from "./Model/MenuType";
 import { NutritionType } from "./Model/NutritionType";
 import { ProductType } from "./Model/ProductType";
 import { User } from "./Model/User";
-import { LoginAudit } from "./Model/LoginAudit";
 import { Institution } from "./Model/Institution";
 import { Canteen } from "./Model/Canteen";
 import { Refeitorio } from "./Model/Refeitorio";
@@ -24,8 +23,8 @@ import bcrypt from "bcrypt";
 import logger from "./utils/logger";
 
 // Route remaining console calls in this bootstrap module to the structured logger
-;(console as any).log = (...args: any[]) => logger.info({ event: "bootstrap_log", message: args.map((a) => (typeof a === "string" ? a : JSON.stringify(a))).join(" ") });
-;(console as any).error = (...args: any[]) => logger.error({ event: "bootstrap_error", message: args.map((a) => (typeof a === "string" ? a : JSON.stringify(a))).join(" ") });
+(console as any).log = (...args: any[]) => logger.info({ event: "bootstrap_log", message: args.map((a) => (typeof a === "string" ? a : JSON.stringify(a))).join(" ") });
+(console as any).error = (...args: any[]) => logger.error({ event: "bootstrap_error", message: args.map((a) => (typeof a === "string" ? a : JSON.stringify(a))).join(" ") });
 
 export default async function bootstrap() {
   // Definir mealsToInsert no início para estar acessível em todo o bootstrap
