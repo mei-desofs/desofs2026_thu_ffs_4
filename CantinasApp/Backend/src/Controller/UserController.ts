@@ -15,6 +15,7 @@ type AuthenticatedUser = {
   role: string;
   sessionId?: string;
 };
+import logger from "../utils/logger";
 
 const getAuthenticatedUser = (req: Request): AuthenticatedUser | undefined =>
   (req as Request & { user?: AuthenticatedUser }).user;
@@ -40,14 +41,12 @@ export class UserController {
       });
     }
 
-    // Validar refeitorioId se o role for RefectoryManager
     if (role === "RefectoryManager" && !refeitorioId) {
       return res
         .status(400)
         .json({ message: "refeitorioId é obrigatório para RefectoryManager." });
     }
 
-    // Validar canteenId se o role for CanteenManager
     if (role === "CanteenManager" && !canteenId) {
       return res
         .status(400)
@@ -118,6 +117,8 @@ export class UserController {
 
       // Log successful login
       await UserService.logLoginAttempt(email, ipAddress, userAgent, "success");
+
+      logger.info({ event: "login_success", userId: user.id, role: user.role });
 
       res.json({
         message: "Login bem-sucedido",

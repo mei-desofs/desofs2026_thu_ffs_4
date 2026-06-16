@@ -78,6 +78,15 @@ export class ReservationService {
     const refeitorio = await Refeitorio.findByPk(data.refeitorioId);
     if (!refeitorio) throw new Error("REFEITORIO_NOT_FOUND");
 
+    const existing = await Reservation.findOne({
+      where: {
+        userId: data.userId,
+        mealId: data.mealId,
+        status: { [Op.notIn]: ["canceled"] },
+      },
+    });
+    if (existing) throw new Error("DUPLICATE_RESERVATION");
+
     const reservation = await Reservation.create(data);
 
     // Atualizar a tabela reservation_quantities_canteen apenas se a reserva não for cancelada

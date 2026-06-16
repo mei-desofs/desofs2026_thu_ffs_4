@@ -3,7 +3,7 @@ import logger from "../utils/logger";
 
 export const authorizeRoles = (...roles: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    const user = (req as any).user; // vem do authMiddleware
+    const user = req.user;
 
     if (!user) {
       logger.warn({ event: "authz_no_user", path: req.path, method: req.method, ip: req.ip });

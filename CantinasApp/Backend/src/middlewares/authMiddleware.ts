@@ -9,7 +9,7 @@ export const authMiddleware = async (
   next: NextFunction,
 ) => {
   const authHeader = req.headers["authorization"];
-  const token = authHeader?.split(" ")[1]; // "Bearer <token>"
+  const token = authHeader?.split(" ")[1];
 
   if (!token) {
     logger.warn({ event: "auth_no_token", path: req.path, method: req.method, ip: req.ip });
@@ -24,7 +24,6 @@ export const authMiddleware = async (
       undefined;
     const userAgent = req.headers["user-agent"] as string | undefined;
 
-    // Garantir que id e role existem
     if (!decoded.id || !decoded.role) {
       logger.warn({ event: "auth_invalid_payload", path: req.path, ip: req.ip });
       return res.status(403).json({ message: "Token inválido" });
