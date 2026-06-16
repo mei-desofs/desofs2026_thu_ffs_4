@@ -39,9 +39,14 @@ import { NeededProduct } from "./src/Model/NeededProduct";
 import { Notification } from "./src/Model/Notification";
 import { AverageReservation } from "./src/Model/AverageReservation";  
 import requestLogger from "./src/middlewares/requestLogger";
-
+import { allowedMethodsMiddleware } from "./src/middlewares/allowedMethods";
+import { headerSanitizer } from "./src/middlewares/headerSanitizer";
+import { urlLengthLimit } from "./src/middlewares/urlLength";
 
 const app = express();
+
+app.set("trust proxy", true);
+
 const PORT = process.env.PORT || 3000;
 
 // --- CORS ---
@@ -51,8 +56,14 @@ app.use(cors({
   credentials: true
 }));
 
-app.use(express.json());
 app.use(requestLogger);
+app.use(express.json({
+  limit: "1mb",
+  type: "application/json"
+}));
+app.use(headerSanitizer);
+app.use(urlLengthLimit);
+app.use(allowedMethodsMiddleware);
 app.use("/users", userRoutes);
 app.use("/auxiliar", auxiliarRoutes);
 app.use("/products", productRoutes);
