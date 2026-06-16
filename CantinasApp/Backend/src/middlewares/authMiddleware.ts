@@ -3,8 +3,6 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { JWT_SECRET } from "../Config/auth";
 import logger from "../utils/logger";
 
-const SECRET_KEY = process.env.JWT_SECRET;
-
 export const authMiddleware = async (
   req: Request,
   res: Response,

@@ -16,11 +16,6 @@ type AuthenticatedUser = {
 };
 import logger from "../utils/logger";
 
-const rawJwtSecret = process.env.JWT_SECRET;
-if (!rawJwtSecret) {
-  throw new Error("JWT_SECRET não definido no .env");
-}
-const SECRET_KEY: string = rawJwtSecret;
 const getAuthenticatedUser = (req: Request): AuthenticatedUser | undefined =>
   (req as Request & { user?: AuthenticatedUser }).user;
 
