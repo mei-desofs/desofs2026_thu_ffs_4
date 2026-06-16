@@ -3,6 +3,9 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+# Refresh Alpine packages so the image picks up patched OpenSSL libraries.
+RUN apk update && apk upgrade --no-cache
+
 # Copy package files
 COPY package*.json ./
 COPY tsconfig.json ./
@@ -21,6 +24,9 @@ RUN npm run build
 FROM node:20-alpine
 
 WORKDIR /app
+
+# Refresh Alpine packages so the image picks up patched OpenSSL libraries.
+RUN apk update && apk upgrade --no-cache
 
 # Copy package files
 COPY package*.json ./

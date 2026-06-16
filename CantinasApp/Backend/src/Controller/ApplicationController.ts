@@ -5,6 +5,16 @@ import fs from "fs";
 import path from "path";
 import { safeFilename } from "../utils/fileUtils";
 
+type AuthenticatedUser = {
+  id: number;
+  role: string;
+};
+
+const getAuthenticatedUser = (req: Request): AuthenticatedUser | undefined =>
+  (req as Request & { user?: AuthenticatedUser }).user;
+
+const canManageApplications = (role: string) => role === "NetworkManager";
+
 const service = new ApplicationService();
 
 const productSchema = Joi.object({
@@ -51,8 +61,8 @@ export class ApplicationController {
     try {
       const app = await service.createApplication(req.body);
       res.json(app);
-    } catch (err: any) {
-      if (err.message === "APPLICATION_ALREADY_EXISTS")
+    } catch (error: any) {
+      if (error.message === "APPLICATION_ALREADY_EXISTS")
         return res
           .status(409)
           .json({ error: "User already has an application" });
@@ -64,17 +74,38 @@ export class ApplicationController {
     const userId = Number(req.params.userId);
     if (isNaN(userId)) return res.status(400).json({ error: "Invalid userId" });
 
+    const authenticatedUser = getAuthenticatedUser(req);
+    if (!authenticatedUser) {
+      return res.status(401).json({ error: "Não autenticado" });
+    }
+
+    if (
+      !canManageApplications(authenticatedUser.role) &&
+      authenticatedUser.id !== userId
+    ) {
+      return res
+        .status(403)
+        .json({ error: "Sem permissão para aceder a esta aplicação" });
+    }
+
     try {
       const app = await service.getApplicationByUser(userId);
       res.json(app);
-    } catch (err: any) {
-      if (err.message === "APPLICATION_NOT_FOUND")
+    } catch (error: any) {
+      if (error.message === "APPLICATION_NOT_FOUND")
         return res.status(404).json({ error: "Application not found" });
       res.status(500).json({ error: "Internal server error" });
     }
   }
 
   static async listApplications(req: Request, res: Response) {
+    const authenticatedUser = getAuthenticatedUser(req);
+    if (!authenticatedUser || !canManageApplications(authenticatedUser.role)) {
+      return res
+        .status(403)
+        .json({ error: "Sem permissão para aceder às aplicações" });
+    }
+
     const apps = await service.listApplications();
     res.json(apps);
   }
@@ -92,6 +123,24 @@ export class ApplicationController {
       return res.status(400).json({ error: "Invalid filename" });
     }
 
+    const authenticatedUser = getAuthenticatedUser(req);
+    if (!authenticatedUser) {
+      return res.status(401).json({ error: "Não autenticado" });
+    }
+
+    const app = await service
+      .getApplicationById(applicationId)
+      .catch(() => null);
+    if (
+      app &&
+      !canManageApplications(authenticatedUser.role) &&
+      app.userId !== authenticatedUser.id
+    ) {
+      return res
+        .status(403)
+        .json({ error: "Sem permissão para aceder a este documento" });
+    }
+
     const filePath: string =
       await service.getFilePathByApplicationIdAndFileName(
         applicationId,
@@ -107,7 +156,30 @@ export class ApplicationController {
     const { error } = applicationSchema.validate(req.body);
     if (error) return res.status(400).json({ error: error.message });
 
+    const authenticatedUser = getAuthenticatedUser(req);
+    if (!authenticatedUser) {
+      return res.status(401).json({ error: "Não autenticado" });
+    }
+
     try {
+      const existingApp = await service
+        .getApplicationByUser(Number(req.body.userId))
+        .catch(() => null);
+      if (
+        existingApp &&
+        !canManageApplications(authenticatedUser.role) &&
+        existingApp.userId !== authenticatedUser.id
+      ) {
+        return res
+          .status(403)
+          .json({ error: "Sem permissão para atualizar esta aplicação" });
+      }
+
+      if (!canManageApplications(authenticatedUser.role)) {
+        req.body.status = existingApp?.status;
+        req.body.evaluationComment = existingApp?.evaluationComment;
+      }
+
       const updatedApp = await service.updateApplication(
         applicationId,
         req.body,
@@ -124,6 +196,12 @@ export class ApplicationController {
     const applicationId = Number(req.params.applicationId);
     if (isNaN(applicationId))
       return res.status(400).json({ error: "Invalid applicationId" });
+    const authenticatedUser = getAuthenticatedUser(req);
+    if (!authenticatedUser || !canManageApplications(authenticatedUser.role)) {
+      return res
+        .status(403)
+        .json({ error: "Sem permissão para aceitar aplicações" });
+    }
     try {
       const updatedApp = await service.acceptApplication(
         applicationId,
@@ -141,6 +219,12 @@ export class ApplicationController {
     const applicationId = Number(req.params.applicationId);
     if (isNaN(applicationId))
       return res.status(400).json({ error: "Invalid applicationId" });
+    const authenticatedUser = getAuthenticatedUser(req);
+    if (!authenticatedUser || !canManageApplications(authenticatedUser.role)) {
+      return res
+        .status(403)
+        .json({ error: "Sem permissão para rejeitar aplicações" });
+    }
     try {
       const updatedApp = await service.rejectApplication(
         applicationId,
@@ -156,8 +240,12 @@ export class ApplicationController {
 
   static async createApplicationWithFiles(req: Request, res: Response) {
     try {
+      const authenticatedUser = getAuthenticatedUser(req);
+      if (!authenticatedUser) {
+        return res.status(401).json({ error: "Não autenticado" });
+      }
+
       const {
-        userId,
         businessEmail,
         businessPhone,
         name,
@@ -168,9 +256,18 @@ export class ApplicationController {
         farmerProducts,
       } = req.body;
 
+      const files = (req.files as Express.Multer.File[]) || [];
+
+      const fileMaxSize = 5; //In MB
+      const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf', 'text/plain'];
+
+      if (files.length > 10) return res.status(500).json({ error: "Cannot upload more than 10 files." });
+      if (files.some((f) => f.size > fileMaxSize * 1024 * 1024)) return res.status(500).json({ error: "Cannot upload file with more than " + fileMaxSize + " MB." });
+      if (files.some((f) => allowedMimeTypes.includes(f.mimetype))) return res.status(500).json({ error: "Used only approved file extensions." });
+
       // Criar aplicação **primeiro** sem ficheiros
       const app = await service.createApplication({
-        userId,
+        userId: authenticatedUser.id,
         businessEmail,
         businessPhone,
         name,
@@ -185,11 +282,10 @@ export class ApplicationController {
       if (!app)
         return res.status(500).json({ error: "Failed to create application" });
       const applicationId = app.id;
-      const files = (req.files as Express.Multer.File[]) || [];
 
       const uploadsDir = path.resolve("uploads");
       const documents = files.map((f) => {
-        const newFilename = `${userId}-${applicationId}-${safeFilename(f.originalname)}`;
+        const newFilename = `${authenticatedUser.id}-${applicationId}-${safeFilename(f.originalname)}`;
         const resolvedPath = path.resolve(uploadsDir, newFilename);
 
         if (!resolvedPath.startsWith(uploadsDir + path.sep)) {
@@ -207,9 +303,9 @@ export class ApplicationController {
       });
 
       res.status(201).json(updatedApp);
-    } catch (err: any) {
-      console.error(err);
-      if (err.message === "APPLICATION_ALREADY_EXISTS")
+    } catch (error: any) {
+      console.error(error);
+      if (error.message === "APPLICATION_ALREADY_EXISTS")
         return res
           .status(409)
           .json({ error: "User already has an application" });
@@ -223,10 +319,24 @@ export class ApplicationController {
       if (isNaN(applicationId))
         return res.status(400).json({ error: "Invalid applicationId" });
 
+      const authenticatedUser = getAuthenticatedUser(req);
+      if (!authenticatedUser) {
+        return res.status(401).json({ error: "Não autenticado" });
+      }
+
       // Buscar aplicação existente
       const existingApp = await service.getApplicationByUser(
-        Number(req.body.userId),
+        authenticatedUser.id,
       );
+
+      if (
+        !canManageApplications(authenticatedUser.role) &&
+        existingApp.userId !== authenticatedUser.id
+      ) {
+        return res
+          .status(403)
+          .json({ error: "Sem permissão para atualizar esta aplicação" });
+      }
 
       const files = (req.files as Express.Multer.File[]) || [];
       const uploadsDir2 = path.resolve("uploads");
@@ -248,9 +358,15 @@ export class ApplicationController {
 
       const bodyData = {
         ...req.body,
+        userId: authenticatedUser.id,
         farmerProducts: JSON.parse(req.body.farmerProducts),
         documentsSubmitted,
       };
+
+      if (!canManageApplications(authenticatedUser.role)) {
+        bodyData.status = "submitted";
+        bodyData.evaluationComment = undefined;
+      }
 
       const { error } = applicationSchema.validate(bodyData);
       if (error) return res.status(400).json({ error: error.message });
@@ -260,9 +376,9 @@ export class ApplicationController {
         bodyData,
       );
       res.json(updatedApp);
-    } catch (err: any) {
-      console.error(err);
-      if (err.message === "APPLICATION_NOT_FOUND")
+    } catch (error: any) {
+      console.error(error);
+      if (error.message === "APPLICATION_NOT_FOUND")
         return res.status(404).json({ error: "Application not found" });
       res.status(500).json({ error: "Internal server error" });
     }

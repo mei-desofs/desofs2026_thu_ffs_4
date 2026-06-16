@@ -8,6 +8,10 @@ import { ReservationQuantitiesCanteen } from "../Model/ReservationQuantitiesCant
 import { Op } from "sequelize";
 
 export class ReservationService {
+  async getById(id: number) {
+    return await Reservation.findByPk(id);
+  }
+
   // Função helper para atualizar a tabela reservation_quantities_canteen
   private async updateReservationQuantitiesCanteen(
     mealId: number,

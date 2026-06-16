@@ -33,10 +33,16 @@ import "./src/Model/associations";
 import { startMarkUnconsumedReservationsJob } from "./src/Jobs/markUnconsumedReservations";
 import { startWeeklyMenuPlanningJob } from "./src/Jobs/weeklyMenuPlanning";
 import path from "path";
+import { allowedMethodsMiddleware } from "./src/middlewares/allowedMethods";
+import { headerSanitizer } from "./src/middlewares/headerSanitizer";
+import { urlLengthLimit } from "./src/middlewares/urlLength";
 import logger from "./src/utils/logger";
 import { errorHandler } from "./src/middlewares/errorHandler";
 
 const app = express();
+
+app.set("trust proxy", true);
+
 const PORT = process.env.PORT || 3000;
 
 app.use(helmet({
@@ -69,7 +75,13 @@ app.use(cors({
   credentials: true,
 }));
 
-app.use(express.json());
+app.use(express.json({
+  limit: "1mb",
+  type: "application/json"
+}));
+app.use(headerSanitizer);
+app.use(urlLengthLimit);
+app.use(allowedMethodsMiddleware);
 app.use("/users", userRoutes);
 app.use("/auxiliar", auxiliarRoutes);
 app.use("/products", productRoutes);
