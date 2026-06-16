@@ -15,7 +15,6 @@ type AuthenticatedUser = {
   role: string;
   sessionId?: string;
 };
-import logger from "../utils/logger";
 
 const getAuthenticatedUser = (req: Request): AuthenticatedUser | undefined =>
   (req as Request & { user?: AuthenticatedUser }).user;
