@@ -10,6 +10,7 @@ import { assertPasswordPolicyAsync } from "../utils/passwordPolicy";
 import { generateSecureToken, getTokenExpiry } from "../utils/tokenGenerator";
 import { NotificationService } from "./NotificationService";
 import { SessionService } from "./SessionService";
+import { CRYPTO_CONFIG } from "../Config/cryptoConfig";
 
 export class UserService {
   // Criar novo utilizador
@@ -33,7 +34,10 @@ export class UserService {
   ) {
     await assertPasswordPolicyAsync(password, { name, email, role });
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(
+      password,
+      CRYPTO_CONFIG.passwordHashRounds
+    );
     const user = await User.create({
       name,
       email,
@@ -166,7 +170,10 @@ export class UserService {
       role: user.role,
     });
 
-    user.password = await bcrypt.hash(newPassword, 10);
+    user.password = await bcrypt.hash(
+      newPassword,
+      CRYPTO_CONFIG.passwordHashRounds
+    );
     await user.save();
 
     if (options.terminateOtherSessions && options.currentSessionId) {
@@ -393,7 +400,10 @@ export class UserService {
       role: user.role,
     });
 
-    user.password = await bcrypt.hash(newPassword, 10);
+    user.password = await bcrypt.hash(
+      newPassword,
+      CRYPTO_CONFIG.passwordHashRounds
+    );
     user.passwordResetToken = null;
     user.passwordResetExpiry = null;
     await user.save();
