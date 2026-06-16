@@ -21,13 +21,8 @@ const getAuthenticatedUser = (req: Request): AuthenticatedUser | undefined =>
 const getErrorMessage = (error: unknown, fallback: string) =>
   error instanceof Error ? error.message : fallback;
 
-const getClientIp = (req: Request): string => {
-  return (
-    (req.headers["x-forwarded-for"] as string)?.split(",")[0] ||
-    (req.socket?.remoteAddress as string) ||
-    "unknown"
-  );
-};
+const getClientIp = (req: Request): string =>
+  req.ip ?? "unknown";
 
 export class UserController {
   static async register(req: Request, res: Response) {
