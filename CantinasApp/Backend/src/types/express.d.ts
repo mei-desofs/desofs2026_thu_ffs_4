@@ -5,7 +5,7 @@ declare module "express-serve-static-core" {
       role: string;
     };
     requestId?: string;
-    };
+    }
   }
 
 
