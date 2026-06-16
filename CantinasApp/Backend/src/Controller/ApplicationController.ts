@@ -168,6 +168,15 @@ export class ApplicationController {
         farmerProducts,
       } = req.body;
 
+      const files = (req.files as Express.Multer.File[]) || [];
+      
+      const fileMaxSize = 5; //In MB
+      const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf', 'text/plain'];
+
+      if (files.length > 10) return res.status(500).json({ error: "Cannot upload more than 10 files." });
+      if (files.some((f) => f.size > fileMaxSize * 1024 * 1024)) return res.status(500).json({ error: "Cannot upload file with more than " + fileMaxSize + " MB." });
+      if (files.some((f) => allowedMimeTypes.includes(f.mimetype))) return res.status(500).json({ error: "Used only approved file extensions." });
+      
       // Criar aplicação **primeiro** sem ficheiros
       const app = await service.createApplication({
         userId,
@@ -185,7 +194,6 @@ export class ApplicationController {
       if (!app)
         return res.status(500).json({ error: "Failed to create application" });
       const applicationId = app.id;
-      const files = (req.files as Express.Multer.File[]) || [];
 
       // Renomear ficheiros com userId-applicationId-nomeOriginal
       const documents = files.map((f) => {
