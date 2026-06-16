@@ -41,11 +41,12 @@ import { AverageReservation } from "./src/Model/AverageReservation";
 import { allowedMethodsMiddleware } from "./src/middlewares/allowedMethods";
 import { headerSanitizer } from "./src/middlewares/headerSanitizer";
 import { urlLengthLimit } from "./src/middlewares/urlLength";
+import hpp from 'hpp';
 
 const app = express();
 
 app.set("trust proxy", true);
-
+app.use(hpp());
 const PORT = process.env.PORT || 3000;
 
 // --- CORS ---
