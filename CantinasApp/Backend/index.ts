@@ -38,6 +38,8 @@ import { Order } from "./src/Model/Order";
 import { NeededProduct } from "./src/Model/NeededProduct";
 import { Notification } from "./src/Model/Notification";
 import { AverageReservation } from "./src/Model/AverageReservation";  
+import requestLogger from "./src/middlewares/requestLogger";
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -50,6 +52,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use(requestLogger);
 app.use("/users", userRoutes);
 app.use("/auxiliar", auxiliarRoutes);
 app.use("/products", productRoutes);

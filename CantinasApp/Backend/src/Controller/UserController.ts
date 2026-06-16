@@ -8,6 +8,7 @@ import {
   requestPasswordResetSchema,
   resetPasswordSchema,
 } from "../Schemas/UserValidation";
+import logger from "../utils/logger";
 
 type AuthenticatedUser = {
   id: number;
@@ -197,6 +198,7 @@ export class UserController {
       if (!user) {
         return res.status(404).json({ message: "Utilizador não encontrado." });
       }
+      logger.info({ event: "sensitive_data_access", actor: req.user?.id, targetUserId: id, path: req.path, method: req.method, requestId: (req as any).requestId });
       return res.status(200).json(user);
     } catch (error: unknown) {
       return res.status(500).json({
