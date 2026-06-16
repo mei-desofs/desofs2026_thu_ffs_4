@@ -119,7 +119,7 @@ export class ApplicationController {
     const filename: string = Array.isArray(filenameParam)
       ? filenameParam[0]
       : filenameParam;
-    if (filename == null || filename.length == 0) {
+    if (filename === null || filename.length === 0) {
       return res.status(400).json({ error: "Invalid filename" });
     }
 

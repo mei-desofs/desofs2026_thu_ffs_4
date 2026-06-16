@@ -42,13 +42,14 @@ import requestLogger from "./src/middlewares/requestLogger";
 import { allowedMethodsMiddleware } from "./src/middlewares/allowedMethods";
 import { headerSanitizer } from "./src/middlewares/headerSanitizer";
 import { urlLengthLimit } from "./src/middlewares/urlLength";
+import hpp from 'hpp';
 import logger from "./src/utils/logger";
 import { errorHandler } from "./src/middlewares/errorHandler";
 
 const app = express();
 
 app.set("trust proxy", true);
-
+app.use(hpp());
 const PORT = process.env.PORT || 3000;
 
 app.use(helmet({
