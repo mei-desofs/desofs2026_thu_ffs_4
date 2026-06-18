@@ -23,8 +23,20 @@ import bcrypt from "bcrypt";
 import logger from "./utils/logger";
 
 // Route remaining console calls in this bootstrap module to the structured logger
-(console as any).log = (...args: any[]) => logger.info({ event: "bootstrap_log", message: args.map((a) => (typeof a === "string" ? a : JSON.stringify(a))).join(" ") });
-(console as any).error = (...args: any[]) => logger.error({ event: "bootstrap_error", message: args.map((a) => (typeof a === "string" ? a : JSON.stringify(a))).join(" ") });
+(console as any).log = (...args: any[]) =>
+  logger.info({
+    event: "bootstrap_log",
+    message: args
+      .map((a) => (typeof a === "string" ? a : JSON.stringify(a)))
+      .join(" "),
+  });
+(console as any).error = (...args: any[]) =>
+  logger.error({
+    event: "bootstrap_error",
+    message: args
+      .map((a) => (typeof a === "string" ? a : JSON.stringify(a)))
+      .join(" "),
+  });
 
 export default async function bootstrap() {
   // Definir mealsToInsert no início para estar acessível em todo o bootstrap
@@ -722,6 +734,91 @@ export default async function bootstrap() {
       const exists = await Information.findOne();
       if (!exists) {
         await Information.create(info);
+      }
+    }
+
+    const unitsToInsert = [
+      { id: 1, name: "kg" as UnitEnum },
+      { name: "g" as UnitEnum },
+      { name: "L" as UnitEnum },
+      { name: "mL" as UnitEnum },
+      { name: "unit" as UnitEnum },
+      { name: "box" as UnitEnum },
+    ];
+
+    for (const unit of unitsToInsert) {
+      const exists = await Unit.findOne({ where: { name: unit.name } });
+      if (!exists) {
+        await Unit.create({ ...unit, name: unit.name as UnitEnum });
+      }
+    }
+    logger.info("Units seeded");
+
+    const dishTypesToInsertEarly = [
+      { name: "Meat" },
+      { name: "Fish" },
+      { name: "Vegetarian" },
+    ];
+
+    for (const type of dishTypesToInsertEarly) {
+      const exists = await DishType.findOne({ where: { name: type.name } });
+      if (!exists) {
+        await DishType.create(type);
+      }
+    }
+
+    const mealTypesToInsertEarly = [{ name: "Lunch" }, { name: "Dinner" }];
+
+    for (const mealType of mealTypesToInsertEarly) {
+      const exists = await MealType.findOne({ where: { name: mealType.name } });
+      if (!exists) {
+        await MealType.create(mealType);
+      }
+    }
+
+    const menuTypesToInsertEarly = [
+      { name: "Menu 5 dias" },
+      { name: "Menu 7 dias" },
+    ];
+
+    for (const menuType of menuTypesToInsertEarly) {
+      const exists = await MenuType.findOne({ where: { name: menuType.name } });
+      if (!exists) {
+        await MenuType.create(menuType);
+      }
+    }
+
+    const nutritionTypesToInsertEarly = [
+      { name: "Proteína" },
+      { name: "Carboidratos" },
+      { name: "Gordura" },
+      { name: "Calorias" },
+    ];
+
+    for (const nutrition of nutritionTypesToInsertEarly) {
+      const exists = await NutritionType.findOne({
+        where: { name: nutrition.name },
+      });
+      if (!exists) {
+        await NutritionType.create(nutrition);
+      }
+    }
+
+    const productTypesToInsertEarly = [
+      { name: "Fruta" },
+      { name: "Vegetal" },
+      { name: "Laticínios" },
+      { name: "Carne" },
+      { name: "Peixe" },
+      { name: "Cereal" },
+    ];
+
+    for (const productType of productTypesToInsertEarly) {
+      const exists = await ProductType.findOne({
+        where: { name: productType.name },
+      });
+      if (!exists) {
+        await ProductType.create(productType);
       }
     }
 
@@ -2209,23 +2306,6 @@ export default async function bootstrap() {
     console.error("Error in bootstrap:", error);
   }
 
-  const unitsToInsert = [
-    { id: 1, name: "kg" as UnitEnum },
-    { name: "g" as UnitEnum },
-    { name: "L" as UnitEnum },
-    { name: "mL" as UnitEnum },
-    { name: "unit" as UnitEnum },
-    { name: "box" as UnitEnum },
-  ];
-
-  for (const unit of unitsToInsert) {
-    const exists = await Unit.findOne({ where: { name: unit.name } });
-    if (!exists) {
-      await Unit.create({ ...unit, name: unit.name as UnitEnum });
-    }
-  }
-  logger.info("Units seeded");
-
   const allergensToInsert = [
     { name: "Lactose" },
     { name: "Glúten" },
@@ -2415,35 +2495,6 @@ export default async function bootstrap() {
       role: "RefectoryStaff",
     });
     console.log("✅ RefectoryStaff3 criado com password de demonstração forte");
-  }
-
-  // Adicionar CanteenManager com password de demonstração forte e canteenId 1
-  const canteenManagerExists = await User.findOne({
-    where: { email: "cm@email.com" },
-  });
-  if (!canteenManagerExists) {
-    await User.create({
-      name: "canteenmanager",
-      email: "cm@email.com",
-      password: hashedPassword,
-      status: "enabled",
-      role: "CanteenManager",
-      canteenId: 1,
-    });
-    console.log(
-      "✅ CanteenManager criado com password de demonstração forte e canteenId 1",
-    );
-  } else {
-    // Se já existe, atualizar para ter canteenId 1
-    if (!canteenManagerExists.canteenId) {
-      canteenManagerExists.canteenId = 1;
-      canteenManagerExists.password = hashedPassword;
-      canteenManagerExists.name = "canteenmanager";
-      await canteenManagerExists.save();
-      console.log(
-        "✅ CanteenManager atualizado com password de demonstração forte e canteenId 1",
-      );
-    }
   }
 
   console.log("Users seeded");

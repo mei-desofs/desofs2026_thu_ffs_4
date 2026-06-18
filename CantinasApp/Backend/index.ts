@@ -30,6 +30,7 @@ import RefeitorioRoutes from "./src/Routes/RefeitorioRoutes";
 import CanteenRoutes from "./src/Routes/CanteenRoutes";
 import ProducerStatisticsRoutes from "./src/Routes/ProducerStatisticsRoutes";
 import "./src/Model/associations";
+import bootstrap from "./src/Bootstrap";
 import { startMarkUnconsumedReservationsJob } from "./src/Jobs/markUnconsumedReservations";
 import { startWeeklyMenuPlanningJob } from "./src/Jobs/weeklyMenuPlanning";
 import path from "path";
@@ -37,12 +38,12 @@ import { Menu } from "./src/Model/Menu";
 import { Order } from "./src/Model/Order";
 import { NeededProduct } from "./src/Model/NeededProduct";
 import { Notification } from "./src/Model/Notification";
-import { AverageReservation } from "./src/Model/AverageReservation";  
+import { AverageReservation } from "./src/Model/AverageReservation";
 import requestLogger from "./src/middlewares/requestLogger";
 import { allowedMethodsMiddleware } from "./src/middlewares/allowedMethods";
 import { headerSanitizer } from "./src/middlewares/headerSanitizer";
 import { urlLengthLimit } from "./src/middlewares/urlLength";
-import hpp from 'hpp';
+import hpp from "hpp";
 import logger from "./src/utils/logger";
 import { errorHandler } from "./src/middlewares/errorHandler";
 
@@ -52,71 +53,78 @@ app.set("trust proxy", true);
 app.use(hpp());
 const PORT = process.env.PORT || 3000;
 
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'"],
-      styleSrc: ["'self'"],
-      imgSrc: ["'self'", "data:"],
-      connectSrc: ["'self'"],
-      fontSrc: ["'self'"],
-      objectSrc: ["'none'"],
-      baseUri: ["'none'"],
-      frameAncestors: ["'none'"],
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'"],
+        imgSrc: ["'self'", "data:"],
+        connectSrc: ["'self'"],
+        fontSrc: ["'self'"],
+        objectSrc: ["'none'"],
+        baseUri: ["'none'"],
+        frameAncestors: ["'none'"],
+      },
     },
-  },
-  strictTransportSecurity: {
-    maxAge: 31536000,
-    includeSubDomains: true,
-  },
-  crossOriginEmbedderPolicy: false,
-}));
+    strictTransportSecurity: {
+      maxAge: 31536000,
+      includeSubDomains: true,
+    },
+    crossOriginEmbedderPolicy: false,
+  }),
+);
 
 const allowedOrigin = process.env.CORS_ORIGIN || "http://localhost:5173";
 
-app.use(cors({
-  origin: allowedOrigin,
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: allowedOrigin,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  }),
+);
 
 app.use(requestLogger);
-app.use(express.json({
-  limit: "1mb",
-  type: "application/json"
-}));
+app.use(
+  express.json({
+    limit: "1mb",
+    type: "application/json",
+  }),
+);
 app.use(headerSanitizer);
 app.use(urlLengthLimit);
 app.use(allowedMethodsMiddleware);
-app.use("/users", userRoutes);
-app.use("/auxiliar", auxiliarRoutes);
-app.use("/products", productRoutes);
-app.use("/applications", applicationRoutes);
-app.use("/farmer-products", FarmerProductRoutes);
-app.use("/batches", BatchRoutes);
-app.use("/stocks", StockRoutes);
-app.use("/ingredients", IngredientRoutes);
-app.use("/recipes", RecipeRoutes);
-app.use("/dishes", DishRoutes);
-app.use("/meals", MealRoutes);
-app.use("/menus", MenuRoutes);
-app.use("/statistics", StatisticsRoutes);
-app.use("/reservations", ReservationRoutes);
-app.use("/performance", PerformanceRoutes);
-app.use("/waste-reports", WasteReportRoutes);
-app.use("/notifications", NotificationRoutes);
-app.use("/needed-products", neededProductRoutes);
-app.use("/orders", orderRoutes);
+// API Routes - all under /api prefix
+app.use("/api/users", userRoutes);
+app.use("/api/auxiliar", auxiliarRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/applications", applicationRoutes);
+app.use("/api/farmer-products", FarmerProductRoutes);
+app.use("/api/batches", BatchRoutes);
+app.use("/api/stocks", StockRoutes);
+app.use("/api/ingredients", IngredientRoutes);
+app.use("/api/recipes", RecipeRoutes);
+app.use("/api/dishes", DishRoutes);
+app.use("/api/meals", MealRoutes);
+app.use("/api/menus", MenuRoutes);
+app.use("/api/statistics", StatisticsRoutes);
+app.use("/api/reservations", ReservationRoutes);
+app.use("/api/performance", PerformanceRoutes);
+app.use("/api/waste-reports", WasteReportRoutes);
+app.use("/api/notifications", NotificationRoutes);
+app.use("/api/needed-products", neededProductRoutes);
+app.use("/api/orders", orderRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
-app.use("/parishes", ParishRoutes);
-app.use("/institutions", InstitutionRoutes);
-app.use("/refeitorios", RefeitorioRoutes);
-app.use("/canteens", CanteenRoutes);
-app.use("/producer-statistics", ProducerStatisticsRoutes);
+app.use("/api/parishes", ParishRoutes);
+app.use("/api/institutions", InstitutionRoutes);
+app.use("/api/refeitorios", RefeitorioRoutes);
+app.use("/api/canteens", CanteenRoutes);
+app.use("/api/producer-statistics", ProducerStatisticsRoutes);
 app.get("/", (req, res) => {
-  res.send("Backend TypeScript + MySQL a funcionar!");
+  res.send("Backend TypeScript a funcionar!");
 });
 
 app.use(errorHandler);
@@ -124,10 +132,13 @@ app.use(errorHandler);
 const startServer = async () => {
   try {
     await sequelize.authenticate();
-    logger.info("Connected to MySQL successfully");
+    logger.info("Connected to the database successfully");
 
     await sequelize.sync({ alter: false });
     logger.info("Tables synced");
+
+    // Run bootstrap seeding/initialization
+    await bootstrap();
 
     startMarkUnconsumedReservationsJob();
     startWeeklyMenuPlanningJob();

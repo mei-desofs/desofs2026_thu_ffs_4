@@ -16,7 +16,7 @@ const logger = winston.createLogger({
   },
   format: winston.format.combine(
     winston.format.timestamp({ format: () => new Date().toUTCString() }),
-    winston.format.json()
+    winston.format.json(),
   ),
   transports: [
     new winston.transports.Console({
@@ -25,13 +25,17 @@ const logger = winston.createLogger({
         winston.format.printf((info: winston.Logform.TransformableInfo) => {
           const { level, message, timestamp, ...meta } = info as {
             level: string;
-            message: string;
+            message: any;
             timestamp: string;
             [key: string]: unknown;
           };
-          const metaStr = Object.keys(meta).length ? ` ${JSON.stringify(meta)}` : "";
-          return `${timestamp} ${level}: ${message}${metaStr}`;
-        })
+          const msgStr =
+            typeof message === "string" ? message : JSON.stringify(message);
+          const metaStr = Object.keys(meta).length
+            ? ` ${JSON.stringify(meta)}`
+            : "";
+          return `${timestamp} ${level}: ${msgStr}${metaStr}`;
+        }),
       ),
     }),
     new winston.transports.File({
