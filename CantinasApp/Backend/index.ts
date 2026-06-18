@@ -1,3 +1,5 @@
+/// <reference path="./src/types/express.d.ts" />
+
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -32,6 +34,7 @@ import ProducerStatisticsRoutes from "./src/Routes/ProducerStatisticsRoutes";
 import "./src/Model/associations";
 import { startMarkUnconsumedReservationsJob } from "./src/Jobs/markUnconsumedReservations";
 import { startWeeklyMenuPlanningJob } from "./src/Jobs/weeklyMenuPlanning";
+//import bootstrap from "./src/Bootstrap";
 import path from "path";
 import { Menu } from "./src/Model/Menu";
 import { Order } from "./src/Model/Order";
@@ -128,6 +131,8 @@ const startServer = async () => {
 
     await sequelize.sync({ alter: false });
     logger.info("Tables synced");
+    
+    //await bootstrap();
 
     startMarkUnconsumedReservationsJob();
     startWeeklyMenuPlanningJob();
